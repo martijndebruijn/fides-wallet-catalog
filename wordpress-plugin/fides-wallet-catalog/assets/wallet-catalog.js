@@ -262,6 +262,10 @@
       // Ignore storage errors (private mode / blocked storage)
     }
 
+    if (window.FidesCatalogUI && window.FidesCatalogUI.initMatomoLinkTracking) {
+      window.FidesCatalogUI.initMatomoLinkTracking({ category: 'Wallet Catalog', containerSelector: '#fides-wallet-catalog-root', modalOverlayId: 'fides-modal-overlay' });
+    }
+
     // Load data
     loadWallets();
   }
@@ -1744,17 +1748,17 @@
             <!-- Links -->
             <div class="fides-modal-links">
               ${wallet.website ? `
-                <a href="${escapeHtml(wallet.website)}" target="_blank" rel="noopener" class="fides-modal-link primary">
+                <a href="${escapeHtml(wallet.website)}" target="_blank" rel="noopener" class="fides-modal-link primary" data-matomo-name="Visit website">
                   ${icons.externalLink} Visit Website
                 </a>
               ` : ''}
               ${wallet.openSource && wallet.repository ? `
-                <a href="${escapeHtml(wallet.repository)}" target="_blank" rel="noopener" class="fides-modal-link">
+                <a href="${escapeHtml(wallet.repository)}" target="_blank" rel="noopener" class="fides-modal-link" data-matomo-name="Repository">
                   ${icons.github} View Repository
                 </a>
               ` : ''}
               ${wallet.documentation ? `
-                <a href="${escapeHtml(wallet.documentation)}" target="_blank" rel="noopener" class="fides-modal-link">
+                <a href="${escapeHtml(wallet.documentation)}" target="_blank" rel="noopener" class="fides-modal-link" data-matomo-name="Documentation">
                   ${icons.book} Documentation
                 </a>
               ` : ''}
@@ -1983,7 +1987,7 @@
         window.FidesCatalogUI.openWalletModal(wallet, {
           theme: container ? (container.getAttribute('data-theme') || 'dark') : 'dark',
           onOpen: function(openedWallet) {
-            trackMatomoEvent('Wallet Catalog', 'Modal Open', openedWallet.name);
+            (window.FidesCatalogUI && window.FidesCatalogUI.trackMatomoEvent) && window.FidesCatalogUI.trackMatomoEvent('Wallet Catalog', 'Modal Open', openedWallet.name);
           }
         });
         return;
@@ -1991,7 +1995,7 @@
       selectedWallet = wallet;
       
       // Track modal open in Matomo
-      trackMatomoEvent('Wallet Catalog', 'Modal Open', wallet.name);
+      (window.FidesCatalogUI && window.FidesCatalogUI.trackMatomoEvent) && window.FidesCatalogUI.trackMatomoEvent('Wallet Catalog', 'Modal Open', wallet.name);
       
       renderModal(wallet);
     }
@@ -2153,6 +2157,7 @@
     container.querySelectorAll('.fides-kpi-card').forEach((kpiCard) => {
       kpiCard.addEventListener('click', () => {
         const action = kpiCard.dataset.kpiAction;
+        (window.FidesCatalogUI && window.FidesCatalogUI.trackMatomoEvent) && window.FidesCatalogUI.trackMatomoEvent('Wallet Catalog', 'KPI Click', action || 'unknown');
         if (action === 'toggle-added-filter') {
           filters.addedLast30Days = !filters.addedLast30Days;
           render();
@@ -2488,46 +2493,11 @@
     // Fallback: external link button if provider not supported
     return `
       <div class="fides-video-fallback">
-        <a href="${escapeHtml(videoUrl)}" target="_blank" rel="noopener" class="fides-modal-link primary">
+        <a href="${escapeHtml(videoUrl)}" target="_blank" rel="noopener" class="fides-modal-link primary" data-matomo-name="Video">
           ${icons.play} Watch Video (External)
         </a>
       </div>
     `;
-  }
-
-  /**
-   * ============================================================================
-   * MATOMO ANALYTICS HELPER
-   * ============================================================================
-   * Track user interactions with Matomo (if available)
-   * Privacy-friendly: respects DoNotTrack and only tracks if Matomo is loaded
-   */
-
-  /**
-   * Track event to Matomo analytics
-   * @param {string} category - Event category (e.g., 'Wallet Catalog')
-   * @param {string} action - Event action (e.g., 'Modal Open')
-   * @param {string} name - Event name (e.g., wallet name)
-   * @param {number} value - Optional numeric value
-   */
-  function trackMatomoEvent(category, action, name, value) {
-    // Check if Matomo is loaded
-    if (typeof window._paq === 'undefined') {
-      return;
-    }
-    
-    // Respect DoNotTrack
-    if (navigator.doNotTrack === '1' || navigator.doNotTrack === 'yes') {
-      return;
-    }
-    
-    // Track the event
-    try {
-      window._paq.push(['trackEvent', category, action, name, value]);
-    } catch (e) {
-      // Silently fail if tracking fails
-      console.debug('Matomo tracking failed:', e);
-    }
   }
 
   /**
