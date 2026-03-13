@@ -7,17 +7,30 @@
   },
   "wallets": [
     {
-      "id": "identfy",
-      "name": "Identfy",
-      "description": "Identfy is Spain's first open-source digital wallet solution developed by Izertis S.A. The solution features a two-wallet architecture (Holder Wallet mobile app and Organization Wallet for enterprises) enabling issuance, storage, and verification of verifiable credentials with Zero-Knowledge-Proof protocols for selective disclosure, biometric authentication, and DLT-based security, supporting use cases in healthcare, education, border control, and financial services across EU member states. Izertis actively participates in major EU digital identity projects including DC4EU consortium, EBSI-VECTOR project, and WE BUILD Large Scale Pilot.",
+      "id": "identfy-personal-wallet",
+      "name": "Identfy Personal Wallet",
+      "description": "Identfy Personal Wallet is Izertis' mobile wallet for end users, designed to manage verifiable credentials and interact with public and private digital services with a strong focus on privacy, usability and user control. The wallet supports secure reception and presentation of verifiable credentials through QR codes, deeplinks and proximity-based interactions, and includes advanced features such as credential filtering and search, customizable activations, visual alerts, biometric onboarding, document signing integrations with configurable QTSP/TSP providers, and enterprise-grade security mechanisms including PIN, biometrics, BIP-32 key management, backup and key recovery. It is multi-language, adaptable to corporate look and feel, agnostic to credential types and use cases, and compatible with European business wallets and identity ecosystems such as EBSI, ISBE, LACChainID and AlastriaID.",
       "type": "personal",
+      "platforms": ["iOS", "Android"],
+      "issuanceProtocols": ["OpenID4VCI"],
+      "presentationProtocols": ["OpenID4VP"],
+      "website": "https://identfy.es/",
       "openSource": true,
       "repository": "https://github.com/izertis/identfy",
-      "status": "production",
-      "website": "https://www.izertis.com/en/-/caso-de-exito/identfy",
-      "platforms": ["iOS", "Android"],
-      "logo": "https://flagcdn.com/w80/es.png",
-      "releaseDate": "2023-01-01"
+      "status": "production"
+    },
+    {
+      "id": "identfy-business-wallet",
+      "name": "Identfy Business Wallet",
+      "description": "Identfy Business Wallet is Izertis' organizational wallet for enterprises and public administrations, enabling them to issue, receive and present corporate verifiable credentials in B2B and B2G environments. It supports end-to-end management of corporate credentials such as licenses, powers of attorney, certificates and registers, secure presentation of credentials to third parties, and interoperability with the European digital identity ecosystem, including EUDI and EU Business Wallet scenarios. The solution integrates with enterprise systems through REST APIs and wallet connectors, and provides enterprise-grade security and operations with HSM, RBAC, encryption and traceability. It supports flexible deployment models including on-premise and cloud environments, with a microservices-based architecture designed for Docker and Kubernetes, and is compatible with identity ecosystems such as EBSI, ISBE, LACChainID and AlastriaID.",
+      "type": "organizational",
+      "capabilities": ["issuer", "holder"],
+      "platforms": ["Web"],
+      "issuanceProtocols": ["OpenID4VCI"],
+      "presentationProtocols": ["OpenID4VP"],
+      "website": "https://identfy.es/",
+      "status": "production"
     }
-  ]
+  ],
+  "lastUpdated": "2026-03-13T12:00:00Z"
 }
