@@ -1,0 +1,60 @@
+{
+  "$schema": "https://fides.community/schemas/wallet-catalog/v1",
+  "organization": {
+    "name": "Moldova e-Governance Agency",
+    "website": "https://www.egov.md/en",
+    "logo": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/61/6f/66/616f66c0-047b-eb22-8bb3-0d3a82b3edb2/app_logo_ios-1x_U007emarketing-0-8-0-85-220-0.png/400x400ia-75.webp"
+  },
+  "wallets": [
+    {
+      "id": "wallet:moldova-ega:evo",
+      "type": "personal",
+      "displayName": "EVO",
+      "description": "Government mobile wallet and public services app from the Republic of Moldova. EVO gives citizens access to digital documents and government services in a single mobile application.",
+      "website": "https://apps.apple.com/us/app/evo/id6462688921",
+      "developer": "Moldova e-Governance Agency",
+      "environment": "production",
+      "status": "active",
+      "country": "MD",
+      "platforms": [
+        "iOS",
+        "Android"
+      ],
+      "appStores": {
+        "appleAppStore": "https://apps.apple.com/us/app/evo/id6462688921",
+        "googlePlay": "https://play.google.com/store/apps/details?id=md.egov.evo"
+      },
+      "credentialsSupported": [
+        {
+          "name": "Identity Card",
+          "category": "government_id"
+        },
+        {
+          "name": "Driver's License",
+          "category": "driving_credential"
+        },
+        {
+          "name": "Vehicle Registration Certificate",
+          "category": "vehicle_credential"
+        }
+      ],
+      "features": [
+        "digital document wallet",
+        "QR-based document verification",
+        "public service access",
+        "payments for taxes and public services",
+        "personal data access",
+        "notifications and messages"
+      ],
+      "ecosystems": [
+        "Moldova Government Services",
+        "EUDI-aligned"
+      ],
+      "notes": [
+        "Official government wallet app of the Republic of Moldova.",
+        "Public sources indicate EVO follows basic EUDI principles, but no specific interoperable wallet protocol support was verified from the sources used."
+      ]
+    }
+  ],
+  "lastUpdated": "2026-03-23T00:00:00Z"
+}
