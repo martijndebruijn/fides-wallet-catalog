@@ -1,47 +1,291 @@
 {
-  "$schema": "https://fides.community/schemas/wallet-catalog/v1",
-  "provider": {
-    "name": "Moldova e-Governance Agency",
-    "website": "https://www.egov.md/en",
-    "logo": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/61/6f/66/616f66c0-047b-eb22-8bb3-0d3a82b3edb2/app_logo_ios-1x_U007emarketing-0-8-0-85-220-0.png/400x400ia-75.webp",
-    "country": "MD"
-  },
-  "wallets": [
-    {
-      "id": "moldova-ega-evo",
-      "name": "EVO",
-      "type": "personal",
-      "description": "Government mobile wallet and public services app from the Republic of Moldova. EVO gives citizens access to digital documents and government services in a single mobile application.",
-      "website": "https://apps.apple.com/us/app/evo/id6462688921",
-      "logo": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/61/6f/66/616f66c0-047b-eb22-8bb3-0d3a82b3edb2/app_logo_ios-1x_U007emarketing-0-8-0-85-220-0.png/400x400ia-75.webp",
-      "platforms": [
-        "iOS",
-        "Android"
-      ],
-      "appStoreLinks": {
-        "iOS": "https://apps.apple.com/us/app/evo/id6462688921",
-        "android": "https://play.google.com/store/apps/details?id=md.egov.evo"
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fides.community/schemas/wallet-catalog/v1",
+  "title": "FIDES Wallet Catalog Descriptor",
+  "description": "Schema for describing digital wallets by wallet providers for the FIDES Community catalog",
+  "type": "object",
+  "required": ["$schema", "provider", "wallets"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://fides.community/schemas/wallet-catalog/v1",
+      "description": "Schema identifier - must be this exact value"
+    },
+    "provider": {
+      "type": "object",
+      "description": "Information about the wallet provider/organization",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the organization"
+        },
+        "did": {
+          "type": "string",
+          "description": "Decentralized Identifier (DID) of the organization (optional, but recommended)",
+          "pattern": "^did:[a-z]+:.+"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "description": "Website URL of the organization"
+        },
+        "logo": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the organization's logo"
+        },
+        "country": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code where the provider is based"
+        },
+        "contact": {
+          "type": "object",
+          "description": "Contact information",
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "Contact email address"
+            },
+            "support": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to support page or portal"
+            }
+          }
+        }
+      }
+    },
+    "wallets": {
+      "type": "array",
+      "description": "List of wallets offered by this provider",
+      "items": {
+        "$ref": "#/definitions/Wallet"
       },
-      "credentialFormats": [
-        "SD-JWT-VC",
-        "mDL/mDoc"
-      ],
-      "issuanceProtocols": [
-        "OpenID4VCI"
-      ],
-      "presentationProtocols": [
-        "OpenID4VP"
-      ],
-      "features": [
-        "digital document wallet",
-        "QR-based document verification",
-        "public service access",
-        "payments for taxes and public services",
-        "personal data access",
-        "notifications and messages"
-      ],
-      "status": "production"
+      "minItems": 1
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last update (ISO 8601)"
     }
-  ],
-  "lastUpdated": "2026-03-23T00:00:00Z"
+  },
+  "definitions": {
+    "Wallet": {
+      "type": "object",
+      "description": "A digital identity wallet",
+      "required": ["id", "name", "type"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the wallet within this catalog (lowercase alphanumeric with hyphens)",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the wallet"
+        },
+        "description": {
+          "type": "string",
+          "description": "Short description of the wallet and its purpose"
+        },
+        "logo": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the wallet's logo image"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "description": "Landing page or website for the wallet"
+        },
+        "video": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to a demo or promotional video showcasing the wallet"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["personal", "organizational"],
+          "description": "Wallet type"
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["iOS", "Android", "Web", "Windows", "macOS", "Linux", "CLI"]
+          }
+        },
+        "openSource": {
+          "type": "boolean"
+        },
+        "license": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string",
+          "format": "uri"
+        },
+        "credentialFormats": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "SD-JWT",
+              "SD-JWT-VC",
+              "mDL/mDoc",
+              "AnonCreds",
+              "Idemix",
+              "JWT-VC",
+              "JSON-LD VC",
+              "Apple Wallet Pass",
+              "Google Wallet Pass",
+              "X.509",
+              "CBOR-LD"
+            ]
+          }
+        },
+        "issuanceProtocols": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "OpenID4VCI",
+              "DIDComm Issue Credential v1",
+              "DIDComm Issue Credential v2",
+              "ISO 18013-5 (Device Retrieval)"
+            ]
+          }
+        },
+        "presentationProtocols": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "OpenID4VP",
+              "DIDComm Present Proof v1",
+              "DIDComm Present Proof v2",
+              "ISO 18013-5",
+              "SIOPv2"
+            ]
+          }
+        },
+        "supportedIdentifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keyStorage": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Software",
+              "Secure Enclave (iOS)",
+              "StrongBox (Android)",
+              "TEE",
+              "HSM",
+              "Cloud KMS",
+              "Smart Card",
+              "FIDO2/WebAuthn"
+            ]
+          }
+        },
+        "signingAlgorithms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "credentialStatusMethods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "certifications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interoperabilityProfiles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "DIIP v4",
+              "DIIP v5",
+              "EWC v3",
+              "EUDI Wallet ARF",
+              "HAIP v1"
+            ]
+          }
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "documentation": {
+          "type": "string",
+          "format": "uri"
+        },
+        "appStoreLinks": {
+          "type": "object",
+          "properties": {
+            "iOS": {
+              "type": "string",
+              "format": "uri"
+            },
+            "android": {
+              "type": "string",
+              "format": "uri"
+            },
+            "web": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["development", "beta", "production", "deprecated"]
+        },
+        "releaseDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["holder", "issuer", "verifier"]
+          }
+        }
+      }
+    }
+  }
 }
