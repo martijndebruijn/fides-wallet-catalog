@@ -74,6 +74,22 @@
   border-color: rgba(0, 0, 0, 0.1);
 }
 
+/* Issuance (issuer / OpenID4VCI): FIDES accent blue — same family as credential-format tags */
+.fides-wallet-catalog[data-theme="fides"] .fides-tag.protocol-issuance,
+.fides-wallet-catalog[data-theme="light"] .fides-tag.protocol-issuance {
+  background: rgba(10, 110, 243, 0.1);
+  color: #0a6ef3;
+  border: 1px solid rgba(10, 110, 243, 0.28);
+}
+
+/* Presentation (RP / OpenID4VP, etc.): purple — distinct from issuer blue */
+.fides-wallet-catalog[data-theme="fides"] .fides-tag.protocol-presentation,
+.fides-wallet-catalog[data-theme="light"] .fides-tag.protocol-presentation {
+  background: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.28);
+}
+
 /* FIDES Theme - Card shadow for light background */
 .fides-wallet-catalog[data-theme="fides"] .fides-wallet-card,
 .fides-wallet-catalog[data-theme="light"] .fides-wallet-card {
@@ -325,9 +341,180 @@
 /* Results bar */
 .fides-results-bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap !important;
+  gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+/* Search in results bar (aligned with credential catalog) */
+.fides-wallet-catalog .fides-topbar-search {
+  flex: 1;
+  min-width: 160px;
+  max-width: 480px;
+  height: 2.25rem;
+}
+
+.fides-wallet-catalog .fides-topbar-search .fides-search-input {
+  height: 2.25rem !important;
+  padding: 0 2.25rem 0 2.25rem !important;
+  font-size: 0.875rem;
+  line-height: 1.25;
+  border-radius: 6px !important;
+  background: var(--fides-bg-card) !important;
+  box-sizing: border-box;
+  border: 1px solid var(--fides-border) !important;
+  border-bottom: 1px solid var(--fides-border) !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.fides-wallet-catalog .fides-topbar-search .fides-search-input:focus,
+.fides-wallet-catalog .fides-topbar-search .fides-search-input:focus-visible {
+  outline: none !important;
+  border-color: var(--fides-accent) !important;
+  border-bottom-color: var(--fides-accent) !important;
+  box-shadow: 0 0 0 3px rgba(10, 110, 243, 0.15) !important;
+}
+
+.fides-wallet-catalog .fides-topbar-search .fides-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Scoped under .fides-wallet-catalog so link color wins over theme/site rules (e.g. a { color: inherit }) */
+.fides-wallet-catalog .fides-show-on-map,
+.fides-wallet-catalog a.fides-show-on-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--fides-accent, #3b82f6) !important;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.fides-wallet-catalog .fides-show-on-map:hover,
+.fides-wallet-catalog a.fides-show-on-map:hover {
+  color: var(--fides-accent-hover, #60a5fa) !important;
+  text-decoration: underline;
+}
+
+.fides-wallet-catalog .fides-show-on-map svg {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+/* Full label by default; short "Map" on smaller breakpoints (see media queries) */
+.fides-wallet-catalog .fides-show-on-map-label--short {
+  display: none;
+}
+
+/* Sort row: pushed right after search (credential catalog pattern) */
+.fides-wallet-catalog .fides-results-bar .fides-sort-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--fides-text-secondary);
+  height: 2.25rem;
+  margin: 0;
+  margin-left: auto;
+  padding: 0;
+  flex: none;
+  width: auto;
+}
+
+.fides-wallet-catalog .fides-sort-text {
+  white-space: nowrap;
+}
+
+.fides-wallet-catalog .fides-sort-select {
+  width: auto !important;
+  min-width: 130px;
+  height: 2.25rem;
+  padding: 0 1.75rem 0 0.5rem;
+  line-height: 2.25rem;
+  box-sizing: border-box;
+  border: 1px solid var(--fides-border);
+  border-radius: 6px;
+  background-color: var(--fides-bg-secondary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+  color: var(--fides-text-primary);
+  font-size: 0.875rem;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.fides-wallet-catalog .fides-sort-select:focus {
+  outline: none;
+  border-color: var(--fides-accent);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.fides-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.fides-kpi-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--fides-border);
+  border-radius: 10px;
+  background: var(--fides-bg-secondary);
+  color: var(--fides-text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fides-kpi-card:hover {
+  border-color: var(--fides-accent);
+  transform: translateY(-1px);
+}
+
+.fides-kpi-card.active {
+  border-color: var(--fides-accent);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12);
+}
+
+.fides-kpi-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.fides-kpi-label {
+  font-size: 0.78rem;
+  color: var(--fides-text-secondary);
+}
+
+/* On small screens show only "New" and "Updated" so labels stay on one line */
+@media (max-width: 600px) {
+  .fides-kpi-card .fides-kpi-label-extra {
+    display: none;
+  }
+}
+
+/* Filter option counts (n) next to each sidebar option */
+.fides-filter-option-count {
+  margin-left: 0.25em;
+  font-size: 0.875em;
+  color: var(--fides-accent);
 }
 
 /* Mobile filter toggle - hidden on desktop */
@@ -351,32 +538,26 @@
   border-color: var(--fides-text-muted);
 }
 
-/* Search - now in sidebar */
+/* Legacy: search was in sidebar / duplicate mobile row; now uses .fides-topbar-search in .fides-results-bar */
 .fides-search-container {
-  display: none; /* Legacy - moved to sidebar */
+  display: none;
 }
 
-.fides-sidebar-search {
+.fides-quick-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
   margin-bottom: 0.25rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--fides-border);
 }
 
-.fides-sidebar-search .fides-search-input {
-  padding: 0.5rem 2.25rem 0.5rem 2.25rem !important;
-  font-size: 0.875rem;
-}
-
-/* Mobile search - visible only on mobile */
-.fides-mobile-search {
-  display: none;
-  margin-bottom: 1rem;
-}
-
-@media (max-width: 1023px) {
-  .fides-mobile-search {
-    display: block;
-  }
+.fides-quick-filters-title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fides-text-muted);
 }
 
 .fides-search-wrapper {
@@ -510,6 +691,7 @@
   font-size: 0.875rem;
 }
 
+
 /* Filters Panel - Legacy (replaced by sidebar) */
 .fides-filters {
   display: none;
@@ -523,7 +705,11 @@
 .fides-filter-group.collapsible {
   padding-top: 0;
   margin-top: 0;
+  margin-bottom: 0.5rem;
   transition: padding 0.2s ease;
+}
+.fides-filter-group.collapsible:last-child {
+  margin-bottom: 0;
 }
 
 .fides-filter-group.collapsible.collapsed {
@@ -549,12 +735,36 @@
   color: var(--fides-accent);
 }
 
+/* Wrapper keeps label + [i] together; only as wide as content (like interop matrix) */
+.fides-filter-label-with-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.fides-filter-label-with-info .fides-filter-label {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .fides-filter-label-toggle .fides-filter-label {
   margin-bottom: 0;
   flex: 1;
+  min-width: 0;
   text-align: left;
   font-weight: 600;
   color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fides-filter-toggle-spacer {
+  flex: 1;
+  min-width: 0.5rem;
 }
 
 .fides-filter-label-toggle svg {
@@ -566,18 +776,130 @@
   transform: rotate(-90deg);
 }
 
-/* Active filter indicator (dot) */
+/* Vocabulary [i] info button – after active indicator; tight spacing to chevron */
+.fides-vocab-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--fides-border);
+  border-radius: 50%;
+  background: var(--fides-bg-secondary);
+  color: var(--fides-text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-style: normal;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.15s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.fides-vocab-info:hover {
+  color: #fff;
+  background: var(--fides-accent);
+  border-color: var(--fides-accent);
+  transform: scale(1.05);
+}
+.fides-vocab-info:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--fides-accent);
+}
+.fides-wallet-catalog[data-theme="fides"] .fides-vocab-info:hover,
+.fides-wallet-catalog[data-theme="light"] .fides-vocab-info:hover {
+  background: var(--fides-accent);
+  border-color: var(--fides-accent);
+  color: #fff;
+}
+/* Overlay backdrop behind popup (above mobile menu) */
+.fides-vocab-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 10000000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.fides-vocab-overlay.visible {
+  opacity: 1;
+}
+
+/* Popup: solid background so it stays readable (above mobile menu) */
+.fides-vocab-popup {
+  position: fixed;
+  z-index: 10000001;
+  max-width: 480px;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 1.125rem 1.375rem;
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.fides-vocab-popup.visible {
+  opacity: 1;
+}
+.fides-vocab-popup-title {
+  margin: 0 0 0.5rem 0;
+  color: #1e293b;
+}
+.fides-vocab-popup-intro {
+  margin: 0 0 0.875rem 0;
+  color: #475569;
+  font-size: 0.875rem;
+}
+.fides-vocab-popup-list {
+  margin: 0;
+  padding-left: 1.375rem;
+  color: #334155;
+}
+.fides-vocab-popup-list li {
+  margin-bottom: 0.5rem;
+}
+.fides-vocab-popup-list li:last-child {
+  margin-bottom: 0;
+}
+.fides-vocab-popup-list strong {
+  color: #1e293b;
+}
+
+@media (max-width: 520px) {
+  .fides-vocab-popup {
+    left: 1rem !important;
+    right: 1rem !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: 85vh;
+    box-sizing: border-box;
+  }
+}
+
+/* Active filter indicator (dot) – no width when inactive so title gets more space */
 .fides-filter-active-indicator {
-  width: 6px;
+  width: 0;
+  min-width: 0;
   height: 6px;
   background: var(--fides-accent);
   border-radius: 50%;
   flex-shrink: 0;
   opacity: 0;
-  transition: opacity 0.2s;
+  overflow: hidden;
+  transition: width 0.2s, opacity 0.2s;
 }
 
 .fides-filter-group.has-active .fides-filter-active-indicator {
+  width: 6px;
   opacity: 1;
 }
 
@@ -689,11 +1011,15 @@
   }
 }
 
-/* Medium-large screens (1200px - 1399px): 2 columns with sidebar */
+/* Medium-large screens (1024px - 1399px): 2 columns with sidebar */
 @media (min-width: 1024px) and (max-width: 1399px) {
   .fides-wallet-grid[data-columns="3"],
   .fides-wallet-grid[data-columns="4"] {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .fides-results-bar {
+    flex-wrap: nowrap;
   }
 }
 
@@ -706,14 +1032,14 @@
   .fides-sidebar {
     display: none;
     position: fixed;
-    top: 0;
+    top: 100px;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
-    max-height: 100vh;
+    max-height: calc(100vh - 100px);
     border-radius: 0;
-    z-index: 999998;
+    z-index: 9999999;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     padding: 1rem;
@@ -741,7 +1067,7 @@
     border-radius: 0 0 var(--fides-radius) var(--fides-radius);
     max-width: 320px;
     width: 100%;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 220px);
     overflow-y: auto;
     border: 1px solid var(--fides-border);
     border-top: none;
@@ -749,6 +1075,32 @@
 
   .fides-mobile-filter-toggle {
     display: inline-flex;
+  }
+
+  .fides-wallet-catalog .fides-mobile-filter-toggle {
+    flex: 0 0 100%;
+    justify-content: center;
+  }
+
+  .fides-wallet-catalog .fides-results-bar .fides-sort-label {
+    display: none !important;
+  }
+
+  /* Keep search + "Map" on one row; search grows, link does not wrap below */
+  .fides-wallet-catalog .fides-topbar-search {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    order: -1;
+    height: auto;
+  }
+
+  .fides-wallet-catalog .fides-show-on-map-label--full {
+    display: none;
+  }
+
+  .fides-wallet-catalog .fides-show-on-map-label--short {
+    display: inline;
   }
 
   .fides-wallet-grid[data-columns="3"],
@@ -831,6 +1183,24 @@
   font-weight: 600;
   margin: 0 0 0.25rem 0;
   color: var(--fides-text-primary);
+  /* Reserve 1 line for consistent card height; ellipsis if longer */
+  min-height: 1.4em;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 1 column (mobile): let title use only the space it needs, no fixed height */
+@media (max-width: 639px) {
+  .fides-wallet-name {
+    min-height: 0;
+    -webkit-line-clamp: unset;
+    display: block;
+    overflow: visible;
+    text-overflow: unset;
+  }
 }
 
 .fides-wallet-provider {
@@ -840,6 +1210,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.fides-wallet-updated {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  color: var(--fides-text-muted);
+  line-height: 1.3;
 }
 
 .fides-wallet-type-badge {
@@ -951,6 +1328,23 @@
 
 .fides-wallet-link:hover {
   color: var(--fides-text-primary);
+}
+
+/* Video badge - visual indicator on wallet tile */
+.fides-wallet-video-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--fides-video, #8b5cf6);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.fides-wallet-video-badge svg {
+  width: 12px;
+  height: 12px;
 }
 
 .fides-expand-btn {
@@ -1178,21 +1572,153 @@
   flex-shrink: 0;
 }
 
-.fides-modal-close {
+.fides-modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  margin: -0.5rem -0.5rem 0 0;
+}
+
+.fides-modal-copy-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   color: var(--fides-text-secondary, #94a3b8);
   cursor: pointer;
+  padding: 0.375rem;
+  margin: 0;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.fides-modal-copy-link:hover {
+  background: var(--fides-border, rgba(255, 255, 255, 0.1));
+  color: var(--fides-text-primary, #f1f5f9);
+  opacity: 1;
+}
+
+.fides-modal-copy-link.copied {
+  color: var(--fides-accent, #22c55e);
+  opacity: 1;
+}
+
+.fides-modal-copy-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+.fides-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--fides-text-primary, #f1f5f9);
+  cursor: pointer;
   padding: 0.5rem;
-  margin: -0.5rem -0.5rem 0 0;
+  margin: 0;
   border-radius: 8px;
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .fides-modal-close:hover {
-  background: var(--fides-border, rgba(255, 255, 255, 0.1));
+  background: var(--fides-border, rgba(255, 255, 255, 0.15));
+  color: var(--fides-text-primary, #ffffff);
+}
+
+/* Toast notification */
+.fides-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--fides-bg-secondary, #1e293b);
   color: var(--fides-text-primary, #f1f5f9);
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 1000000;
+  animation: fides-toast-in 0.3s ease-out;
+  pointer-events: auto;
+  border: 1px solid var(--fides-border, rgba(255, 255, 255, 0.1));
+  max-width: 90vw;
+  isolation: isolate;
+}
+
+.fides-toast.fides-toast-out {
+  animation: fides-toast-out 0.3s ease-in forwards;
+}
+
+.fides-toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--fides-accent, #22c55e);
+  color: white;
+  flex-shrink: 0;
+}
+
+.fides-toast-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.fides-toast-message {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@keyframes fides-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fides-toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.98);
+  }
+}
+
+/* Toast theme overrides */
+.fides-toast[data-theme="fides"],
+.fides-toast[data-theme="light"] {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .fides-toast {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
 }
 
 /* Modal body */
@@ -1204,6 +1730,8 @@
 .fides-modal-badges {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 0.5rem;
   margin-bottom: 1.25rem;
 }
@@ -1216,6 +1744,8 @@
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .fides-modal-badge.type-personal {
@@ -1249,6 +1779,39 @@
   line-height: 1.6;
   color: var(--fides-text-secondary, #94a3b8);
   margin: 0;
+}
+
+/* Video embed container - responsive 16:9 */
+.fides-video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  border-radius: var(--fides-radius, 12px);
+  background: #000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fides-video-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Fallback for unsupported video providers */
+.fides-video-fallback {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+/* FIDES/Light theme adjustments */
+.fides-modal-overlay[data-theme="fides"] .fides-video-container,
+.fides-modal-overlay[data-theme="light"] .fides-video-container {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Info grid */
@@ -1424,13 +1987,32 @@
 
 .fides-modal-overlay[data-theme="fides"] .fides-modal-close,
 .fides-modal-overlay[data-theme="light"] .fides-modal-close {
-  color: #6b7280;
+  color: #000000;
 }
 
 .fides-modal-overlay[data-theme="fides"] .fides-modal-close:hover,
 .fides-modal-overlay[data-theme="light"] .fides-modal-close:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.08);
   color: #000000;
+}
+
+.fides-modal-overlay[data-theme="fides"] .fides-modal-copy-link,
+.fides-modal-overlay[data-theme="light"] .fides-modal-copy-link {
+  color: #6b7280;
+  opacity: 0.8;
+}
+
+.fides-modal-overlay[data-theme="fides"] .fides-modal-copy-link:hover,
+.fides-modal-overlay[data-theme="light"] .fides-modal-copy-link:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #374151;
+  opacity: 1;
+}
+
+.fides-modal-overlay[data-theme="fides"] .fides-modal-copy-link.copied,
+.fides-modal-overlay[data-theme="light"] .fides-modal-copy-link.copied {
+  color: #16a34a;
+  opacity: 1;
 }
 
 .fides-modal-overlay[data-theme="fides"] .fides-modal-badge.type-personal,
@@ -1636,15 +2218,17 @@ span.fides-tag.platform {
   box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
 }
 
-/* Protocol tags */
+/* Protocol tags (dark catalog chrome) — align with FIDES blue vs VP purple used in light theme */
 .fides-tag.protocol-issuance {
-  background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
 }
 
 .fides-tag.protocol-presentation {
   background: rgba(139, 92, 246, 0.15);
   color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.35);
 }
 
 /* DID method tags */
@@ -1701,14 +2285,16 @@ span.fides-tag.platform {
 
 .fides-modal-overlay[data-theme="fides"] .fides-tag.protocol-issuance,
 .fides-modal-overlay[data-theme="light"] .fides-tag.protocol-issuance {
-  background: rgba(34, 197, 94, 0.1);
-  color: #16a34a;
+  background: rgba(10, 110, 243, 0.1);
+  color: #0a6ef3;
+  border: 1px solid rgba(10, 110, 243, 0.25);
 }
 
 .fides-modal-overlay[data-theme="fides"] .fides-tag.protocol-presentation,
 .fides-modal-overlay[data-theme="light"] .fides-tag.protocol-presentation {
   background: rgba(124, 58, 237, 0.1);
   color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.25);
 }
 
 .fides-modal-overlay[data-theme="fides"] .fides-tag.standard,

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://fides.community/schemas/wallet-catalog/v1",
+  "provider": {
+    "name": "Moldova e-Governance Agency",
+    "website": "https://www.egov.md/en",
+    "logo": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/61/6f/66/616f66c0-047b-eb22-8bb3-0d3a82b3edb2/app_logo_ios-1x_U007emarketing-0-8-0-85-220-0.png/400x400ia-75.webp",
+    "country": "MD"
+  },
+  "wallets": [
+    {
+      "id": "moldova-ega-evo",
+      "name": "EVO",
+      "description": "Government mobile wallet and public services app from the Republic of Moldova. EVO gives citizens access to digital documents and government services in a single mobile application.",
+      "logo": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/61/6f/66/616f66c0-047b-eb22-8bb3-0d3a82b3edb2/app_logo_ios-1x_U007emarketing-0-8-0-85-220-0.png/400x400ia-75.webp",
+      "website": "https://apps.apple.com/us/app/evo/id6462688921",
+      "type": "personal",
+      "platforms": [
+        "iOS",
+        "Android"
+      ],
+      "credentialFormats": [
+        "SD-JWT-VC",
+        "mDL/mDoc"
+      ],
+      "issuanceProtocols": [
+        "OpenID4VCI"
+      ],
+      "presentationProtocols": [
+        "OpenID4VP"
+      ],
+      "features": [
+        "Digital document wallet",
+        "QR code verification",
+        "Access to public services",
+        "Payments for taxes and public services",
+        "Personal data access",
+        "Notifications and messages"
+      ],
+      "appStoreLinks": {
+        "iOS": "https://apps.apple.com/us/app/evo/id6462688921",
+        "android": "https://play.google.com/store/apps/details?id=md.egov.evo"
+      },
+      "status": "production"
+    }
+  ],
+  "lastUpdated": "2026-03-23T00:00:00Z"
+}

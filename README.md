@@ -46,11 +46,14 @@ wallet-catalog/
 ├── wordpress-plugin/             # WordPress plugin
 │   └── fides-wallet-catalog/
 ├── data/
-│   ├── aggregated.json           # Aggregated wallet data
+│   ├── aggregated.json           # Aggregated wallet data (used by UI/API)
+│   ├── wallet-history-state.json # Stable first-seen state across crawler runs
 │   └── did-registry.json         # Registered DIDs for automatic crawling
 └── docs/                         # Documentation
     ├── DID_REGISTRATION.md       # How to register your DID
-    └── GITHUB_REPO_STRUCTURE.md  # Repository structure
+    ├── GITHUB_REPO_STRUCTURE.md  # Repository structure
+    ├── DESIGN_DECISIONS.md       # Architecture and design choices
+    └── LESSONS_LEARNED.md        # Lessons from update visibility & filter counters
 ```
 
 ## 🚀 Getting Started
@@ -64,6 +67,20 @@ npm install
 ### Run Crawler
 
 This crawls the wallet catalogs and generates `data/aggregated.json`:
+
+```bash
+npm run crawl
+```
+
+### Backfill first-seen dates (one-time / when needed)
+
+To initialize historical `firstSeenAt` values from git history:
+
+```bash
+npm run backfill:first-seen
+```
+
+After backfill, run the crawler again:
 
 ```bash
 npm run crawl
@@ -146,6 +163,22 @@ npm run validate
 
 ## 🔍 Using the Catalog Data
 
+### Date Semantics in `aggregated.json`
+
+Each wallet in `data/aggregated.json` now includes:
+
+- `updatedAt` - semantic update timestamp used for "Last updated" sorting
+- `firstSeenAt` - stable first time this wallet was seen in the FIDES catalog
+- `fetchedAt` - technical crawl timestamp (still present for backwards compatibility)
+
+`updatedAt` fallback order:
+1. wallet-level `updatedAt` / `updated` from provider data
+2. catalog-level `lastUpdated`
+3. git last commit date of the provider's `wallet-catalog.json`
+4. `fetchedAt` (last resort)
+
+`firstSeenAt` is persisted in `data/wallet-history-state.json`, so it does not reset on each crawl.
+
 ### Direct JSON Access
 
 The aggregated catalog is available at:
@@ -218,7 +251,19 @@ A WordPress plugin is included in `wordpress-plugin/fides-wallet-catalog/`.
 | `columns` | 1, 2, 3, 4 | Number of columns (default: 3) |
 | `theme` | dark, light | Color theme (default: dark) |
 
+Each filter option shows a count of how many wallets match (e.g. "Personal (52)", "SD-JWT-VC (48)") so you can see the dataset distribution at a glance. Counts are computed over the visible set (e.g. when using `type="personal"`, only personal wallets are counted).
+
 The plugin automatically fetches data from the FIDES Community GitHub repository daily.
+
+### Plugin data fallback (local)
+
+The WordPress plugin tries GitHub first and falls back to:
+
+`wordpress-plugin/fides-wallet-catalog/data/aggregated.json`
+
+For local testing with the latest generated data, copy:
+
+`data/aggregated.json` -> `wordpress-plugin/fides-wallet-catalog/data/aggregated.json`
 
 ## 📄 License
 

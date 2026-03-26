@@ -30,7 +30,11 @@
     apple: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
     playStore: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 9.99l-2.302 2.302-8.634-8.634z"/></svg>',
     eye: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
-    penLine: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'
+    penLine: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    video: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>',
+    play: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+    link: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+    share: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>'
   };
 
   // Selected wallet for modal
@@ -70,6 +74,44 @@
     'CBOR-LD'
   ];
 
+  /** COSE algorithm integers from wallet / issuer metadata (IANA + common deployments). */
+  const COSE_SIGNING_ALG_LABELS = {
+    '-257': 'RS256',
+    '-258': 'RS384',
+    '-259': 'RS512',
+    '-7': 'ES256',
+    '-8': 'EdDSA',
+    '-9': 'ES512',
+    '-35': 'ES384',
+    '-36': 'ES512',
+    '-37': 'PS256',
+    '-38': 'PS384',
+    '-39': 'PS512',
+    '-19': 'Ed25519',
+    '-46': 'Ed448',
+    '-47': 'ES256K',
+  };
+
+  function formatSigningAlgorithmLabel(alg) {
+    if (alg === null || alg === undefined || alg === '') return String(alg);
+    if (typeof alg === 'number' && Number.isFinite(alg)) {
+      const k = String(alg);
+      return COSE_SIGNING_ALG_LABELS[k] || `COSE ${k}`;
+    }
+    const s = String(alg).trim();
+    if (/^-?\d+$/.test(s)) {
+      return COSE_SIGNING_ALG_LABELS[s] || `COSE ${s}`;
+    }
+    return s;
+  }
+
+  function uniqueSigningAlgorithmLabels(algorithms) {
+    if (!algorithms || !algorithms.length) return [];
+    const labels = [...new Set(algorithms.map(formatSigningAlgorithmLabel))];
+    labels.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    return labels;
+  }
+
   /**
    * Sort credential formats in consistent order
    */
@@ -91,8 +133,79 @@
     githubDataUrl: 'https://raw.githubusercontent.com/FIDEScommunity/fides-wallet-catalog/main/data/aggregated.json'
   };
 
+  // Map page URL for "Show on map" link (configurable via WordPress)
+  const MAP_PAGE_URL = (window.fidesWalletCatalog && window.fidesWalletCatalog.mapPageUrl)
+    || 'https://fides.community/community-tools/map/';
+
+  // Vocabulary for [i] info popups (loaded from interop-profiles)
+  let vocabulary = null;
+
+  // Map data-filter-group to vocabulary key
+  const WALLET_FILTER_TO_VOCAB = {
+    type: 'type',
+    availability: 'availability',
+    provider: 'provider',
+    platform: 'platform',
+    capabilities: 'capabilities',
+    countries: 'country',
+    interop: 'interopProfile',
+    credentialFormats: 'credentialFormat',
+    issuanceProtocols: 'issuanceProtocol',
+    presentationProtocols: 'presentationProtocol',
+    supportedIdentifiers: 'identifiers',
+    keyStorage: 'keyStorage',
+    signingAlgorithms: 'signingAlgorithm',
+    credentialStatusMethods: 'credentialStatus',
+    license: 'license'
+  };
+  /** Groups that do not show the [i] info button (empty: all groups can show category description from vocabulary) */
+  const WALLET_VOCAB_NO_INFO = new Set([]);
+
+  /** Map filter option data-value to vocabulary key (per group) so popup finds descriptions */
+  const WALLET_OPTION_TO_VOCAB = {
+    issuanceProtocol: {
+      'DIDComm Issue Credential v2': 'DIDComm v2',
+      'DIDComm Issue Credential v1': 'DIDComm v1'
+    },
+    presentationProtocol: {
+      'DIDComm Present Proof v2': 'DIDComm v2'
+    },
+    identifiers: {
+      'did:web': 'didWeb',
+      'did:key': 'didKey',
+      'did:jwk': 'didJwk',
+      'did:peer': 'didPeer',
+      'did:ebsi': 'didEbsi'
+    },
+    keyStorage: {
+      'Secure Enclave (iOS)': 'secureEnclaveIos',
+      'StrongBox (Android)': 'strongboxAndroid',
+      'Software': 'softwareKeyStorage',
+      'HSM': 'hsm',
+      'TEE': 'tee'
+    },
+    signingAlgorithm: {
+      'ECDSA ES256': 'ecdsaEs256',
+      'ES256': 'ecdsaEs256'
+    },
+    credentialStatus: {
+      'JWT Validity': 'jwtValidity',
+      'IETF Token Status List': 'ietfTokenStatusList',
+      'PKI Cert Validity': 'pkiCertValidity'
+    },
+    license: {
+      'true': 'openSource',
+      'false': 'proprietary'
+    }
+  };
+
   // State
   let wallets = [];
+  /** Precomputed counts per filter option (set after load, over walletsForFacets) */
+  let filterFacets = null;
+  const SORT_PREFERENCE_STORAGE_KEY = 'fidesWalletCatalogSortBy';
+  let sortBy = 'lastUpdated';
+  let originalIds = []; // IDs from ?wallets= URL param; preserved so the filter can be toggled back on
   let filters = {
     search: '',
     type: [],
@@ -109,7 +222,10 @@
     interoperabilityProfiles: [],
     status: [],
     openSource: null,
-    governance: null // 'government' or 'private'
+    governance: null, // 'government' or 'private'
+    addedLast30Days: false,
+    includesVideo: false,
+    ids: [] // pre-filter by wallet IDs (set via ?wallets= URL param)
   };
 
   // Country code to name mapping
@@ -176,8 +292,104 @@
       filters.type = [settings.type];
     }
 
+    // Restore persisted sort preference (if supported)
+    try {
+      const savedSort = window.localStorage.getItem(SORT_PREFERENCE_STORAGE_KEY);
+      if (savedSort === 'az' || savedSort === 'lastUpdated') {
+        sortBy = savedSort;
+      }
+    } catch (error) {
+      // Ignore storage errors (private mode / blocked storage)
+    }
+
+    if (window.FidesCatalogUI && window.FidesCatalogUI.initMatomoLinkTracking) {
+      window.FidesCatalogUI.initMatomoLinkTracking({ category: 'Wallet Catalog', containerSelector: '#fides-wallet-catalog-root', modalOverlayId: 'fides-modal-overlay' });
+    }
+
     // Load data
     loadWallets();
+  }
+
+  /**
+   * Parse first available date from candidate fields
+   */
+  function parseWalletDate(wallet, dateFields) {
+    if (!wallet || !Array.isArray(dateFields)) return null;
+    for (const field of dateFields) {
+      const value = wallet[field];
+      if (!value) continue;
+      const date = new Date(value);
+      if (!Number.isNaN(date.getTime())) return date;
+    }
+    return null;
+  }
+
+  /**
+   * Best-effort "added" date for quick filter
+   */
+  function getWalletAddedDate(wallet) {
+    return parseWalletDate(wallet, ['firstSeenAt', 'createdAt', 'addedAt', 'releaseDate']);
+  }
+
+  /**
+   * Best-effort "updated" date for sorting/stats
+   */
+  function getWalletUpdatedDate(wallet) {
+    return parseWalletDate(wallet, ['updatedAt', 'fetchedAt', 'releaseDate']);
+  }
+
+  /**
+   * Check if date is within X days from now
+   */
+  function isWithinLastDays(date, days) {
+    if (!date || Number.isNaN(date.getTime())) return false;
+    const threshold = Date.now() - (days * 24 * 60 * 60 * 1000);
+    return date.getTime() >= threshold;
+  }
+
+  /**
+   * Format date as relative update text for cards
+   */
+  function formatUpdatedLabel(date) {
+    if (!date || Number.isNaN(date.getTime())) return '';
+    return `Updated ${date.toLocaleDateString('en-US')}`;
+  }
+
+  /**
+   * Whether wallet has a usable video URL
+   */
+  function hasWalletVideo(wallet) {
+    if (!wallet || !wallet.video || typeof wallet.video !== 'string') return false;
+    return wallet.video.trim().length > 0;
+  }
+
+  /**
+   * Get simple KPI metrics for current result set
+   */
+  function getCatalogMetrics(items) {
+    const safeItems = Array.isArray(items) ? items : [];
+    let newLast30Days = 0;
+    let updatedLast30Days = 0;
+    const countries = new Set();
+
+    safeItems.forEach((wallet) => {
+      if (isWithinLastDays(getWalletAddedDate(wallet), 30)) {
+        newLast30Days += 1;
+      }
+      if (isWithinLastDays(getWalletUpdatedDate(wallet), 30)) {
+        updatedLast30Days += 1;
+      }
+      if (wallet.provider && wallet.provider.country) {
+        countries.add(wallet.provider.country);
+      }
+    });
+
+    return {
+      total: safeItems.length,
+      newLast30Days,
+      updatedLast30Days,
+      countryCount: countries.size
+    };
   }
 
   /**
@@ -208,12 +420,75 @@
 
     if (wallets.length === 0) {
       console.error('Failed to load wallets from any source');
+    } else {
+      const walletsForFacets = settings.type ? wallets.filter(w => w.type === settings.type) : wallets;
+      filterFacets = computeFilterFacets(walletsForFacets);
     }
+
+    // Load vocabulary for [i] info popups (primary = GitHub, fallback = local assets)
+    if (config.vocabularyUrl || config.vocabularyFallbackUrl) {
+      vocabulary = await loadVocabulary(config.vocabularyUrl, config.vocabularyFallbackUrl);
+    }
+
+    // Read query parameters for filtering
+    readQueryParams();
+    normalizeWalletSigningAlgorithmFilters();
 
     render();
     
     // Check for deep link after render
     checkDeepLink();
+  }
+
+  /**
+   * Load vocabulary JSON (primary URL first, then fallback when GitHub unreachable)
+   */
+  async function loadVocabulary(primaryUrl, fallbackUrl) {
+    const tryLoad = async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      return data.terms || null;
+    };
+    if (primaryUrl) {
+      try {
+        return await tryLoad(primaryUrl);
+      } catch (e) {
+        console.warn('Vocabulary load failed (primary):', e.message);
+      }
+    }
+    if (fallbackUrl) {
+      try {
+        const terms = await tryLoad(fallbackUrl);
+        if (terms) console.log('Vocabulary loaded from fallback');
+        return terms;
+      } catch (e) {
+        console.warn('Vocabulary load failed (fallback):', e.message);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Read and apply query parameters for filtering.
+   * Supports:
+   *   ?profile=Profile Name     — pre-filter by interoperability profile
+   *   ?wallets=id1,id2,...      — show only specific wallets (comma-separated IDs)
+   */
+  function readQueryParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const profileParam = urlParams.get('profile');
+    if (profileParam && !filters.interoperabilityProfiles.includes(profileParam)) {
+      filters.interoperabilityProfiles.push(profileParam);
+      document.body.classList.add('filters-visible');
+    }
+
+    const walletsParam = urlParams.get('wallets');
+    if (walletsParam) {
+      originalIds = walletsParam.split(',').map(s => s.trim()).filter(Boolean);
+      filters.ids = [...originalIds];
+    }
   }
 
   /**
@@ -242,7 +517,12 @@
    * Filter wallets based on current filters
    */
   function getFilteredWallets() {
-    return wallets.filter(wallet => {
+    const filtered = wallets.filter(wallet => {
+      // Pre-filter: only show specific wallet IDs (set via ?wallets= URL param)
+      if (filters.ids && filters.ids.length > 0) {
+        if (!filters.ids.includes(wallet.id)) return false;
+      }
+
       // Search
       if (filters.search) {
         const search = filters.search.toLowerCase();
@@ -311,7 +591,9 @@
 
       // Signing Algorithms
       if (filters.signingAlgorithms.length > 0) {
-        const hasMatch = filters.signingAlgorithms.some(a => (wallet.signingAlgorithms || []).includes(a));
+        const hasMatch = filters.signingAlgorithms.some(sel =>
+          (wallet.signingAlgorithms || []).some(w => formatSigningAlgorithmLabel(w) === sel)
+        );
         if (!hasMatch) return false;
       }
 
@@ -356,8 +638,31 @@
         if (filters.governance === 'private' && isGov) return false;
       }
 
+      // Added in last 30 days
+      if (filters.addedLast30Days) {
+        if (!isWithinLastDays(getWalletAddedDate(wallet), 30)) return false;
+      }
+
+      // Includes video
+      if (filters.includesVideo) {
+        if (!hasWalletVideo(wallet)) return false;
+      }
+
       return true;
-    }).sort((a, b) => a.name.localeCompare(b.name));
+    });
+
+    if (sortBy === 'lastUpdated') {
+      return filtered.sort((a, b) => {
+        const dateA = getWalletUpdatedDate(a);
+        const dateB = getWalletUpdatedDate(b);
+        const timeA = dateA ? dateA.getTime() : 0;
+        const timeB = dateB ? dateB.getTime() : 0;
+        if (timeB !== timeA) return timeB - timeA;
+        return a.name.localeCompare(b.name);
+      });
+    }
+
+    return filtered.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   /**
@@ -380,7 +685,122 @@
     count += filters.status.length;
     if (filters.openSource !== null) count += 1;
     if (filters.governance !== null) count += 1;
+    if (filters.addedLast30Days) count += 1;
+    if (filters.includesVideo) count += 1;
+    if (filters.ids && filters.ids.length > 0) count += 1;
     return count;
+  }
+
+  /**
+   * Derive status bucket for facets (must match getFilteredWallets logic)
+   */
+  function getWalletStatusBucket(wallet) {
+    const hasAppLinks = wallet.appStoreLinks && (
+      wallet.appStoreLinks.iOS ||
+      wallet.appStoreLinks.ios ||
+      wallet.appStoreLinks.android ||
+      wallet.appStoreLinks.web
+    );
+    return hasAppLinks ? 'available' : 'development';
+  }
+
+  /**
+   * Compute filter facets (counts per option) in one pass over wallets.
+   * Called once after load over the visible set (walletsForFacets). Used for sidebar (n) counters.
+   */
+  function computeFilterFacets(walletList) {
+    const type = {};
+    const status = { available: 0, development: 0 };
+    const governance = { government: 0, private: 0 };
+    const platforms = {};
+    const capabilities = {};
+    const countryCount = {};
+    const credentialFormats = {};
+    const issuanceProtocols = {};
+    const presentationProtocols = {};
+    const supportedIdentifiers = {};
+    const keyStorage = {};
+    const signingAlgorithms = {};
+    const credentialStatusMethods = {};
+    const interoperabilityProfiles = {};
+    const openSource = { true: 0, false: 0 };
+    let addedLast30Days = 0;
+    let includesVideo = 0;
+
+    walletList.forEach(wallet => {
+      if (wallet.type) {
+        type[wallet.type] = (type[wallet.type] || 0) + 1;
+      }
+      status[getWalletStatusBucket(wallet)] += 1;
+      const isGov = isGovernmentWallet(wallet);
+      if (isGov) governance.government += 1;
+      else governance.private += 1;
+      (wallet.platforms || []).forEach(p => {
+        platforms[p] = (platforms[p] || 0) + 1;
+      });
+      (wallet.capabilities || []).forEach(c => {
+        capabilities[c] = (capabilities[c] || 0) + 1;
+      });
+      const c = wallet.provider?.country;
+      if (c) {
+        countryCount[c] = (countryCount[c] || 0) + 1;
+      }
+      (wallet.credentialFormats || []).forEach(f => {
+        credentialFormats[f] = (credentialFormats[f] || 0) + 1;
+      });
+      const issuance = wallet.issuanceProtocols || (wallet.protocols && wallet.protocols.issuance) || [];
+      issuance.forEach(p => {
+        issuanceProtocols[p] = (issuanceProtocols[p] || 0) + 1;
+      });
+      const presentation = wallet.presentationProtocols || (wallet.protocols && wallet.protocols.presentation) || [];
+      presentation.forEach(p => {
+        presentationProtocols[p] = (presentationProtocols[p] || 0) + 1;
+      });
+      (wallet.supportedIdentifiers || wallet.didMethods || []).forEach(d => {
+        supportedIdentifiers[d] = (supportedIdentifiers[d] || 0) + 1;
+      });
+      (wallet.keyStorage || []).forEach(k => {
+        keyStorage[k] = (keyStorage[k] || 0) + 1;
+      });
+      (wallet.signingAlgorithms || []).forEach(a => {
+        const L = formatSigningAlgorithmLabel(a);
+        signingAlgorithms[L] = (signingAlgorithms[L] || 0) + 1;
+      });
+      (wallet.credentialStatusMethods || []).forEach(m => {
+        credentialStatusMethods[m] = (credentialStatusMethods[m] || 0) + 1;
+      });
+      (wallet.interoperabilityProfiles || []).forEach(p => {
+        interoperabilityProfiles[p] = (interoperabilityProfiles[p] || 0) + 1;
+      });
+      if (wallet.openSource === true) openSource.true += 1;
+      else openSource.false += 1;
+      if (isWithinLastDays(getWalletAddedDate(wallet), 30)) addedLast30Days += 1;
+      if (hasWalletVideo(wallet)) includesVideo += 1;
+    });
+
+    const country = Object.entries(countryCount)
+      .map(([code, count]) => ({ code, count }))
+      .sort((a, b) => (COUNTRY_NAMES[a.code] || a.code).localeCompare(COUNTRY_NAMES[b.code] || b.code));
+
+    return {
+      type,
+      status,
+      governance,
+      platforms,
+      capabilities,
+      country,
+      credentialFormats,
+      issuanceProtocols,
+      presentationProtocols,
+      supportedIdentifiers,
+      keyStorage,
+      signingAlgorithms,
+      credentialStatusMethods,
+      interoperabilityProfiles,
+      openSource,
+      addedLast30Days,
+      includesVideo
+    };
   }
 
   /**
@@ -404,11 +824,19 @@
    * Get unique signing algorithms from all wallets
    */
   function getAvailableSigningAlgorithms() {
-    const algorithms = new Set();
+    const labels = new Set();
     wallets.forEach(wallet => {
-      (wallet.signingAlgorithms || []).forEach(a => algorithms.add(a));
+      (wallet.signingAlgorithms || []).forEach(a => labels.add(formatSigningAlgorithmLabel(a)));
     });
-    return Array.from(algorithms).sort();
+    (filters.signingAlgorithms || []).forEach(f => labels.add(formatSigningAlgorithmLabel(f)));
+    return Array.from(labels).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+  }
+
+  /** Merge legacy filter state (raw COSE / string) into canonical display labels. */
+  function normalizeWalletSigningAlgorithmFilters() {
+    filters.signingAlgorithms = [...new Set((filters.signingAlgorithms || []).map((v) => formatSigningAlgorithmLabel(v)))];
   }
 
   /**
@@ -427,10 +855,11 @@
    */
   function render() {
     const filtered = getFilteredWallets();
+    const metrics = getCatalogMetrics(filtered);
     const activeFilterCount = getActiveFilterCount();
     
     // Save focus state before re-rendering
-    const searchInput = document.getElementById('fides-search');
+    const searchInput = document.getElementById('fides-search-input');
     const wasSearchFocused = searchInput && document.activeElement === searchInput;
     const cursorPosition = wasSearchFocused ? searchInput.selectionStart : 0;
     
@@ -459,23 +888,23 @@
             </div>
           </div>
           <div class="fides-sidebar-content">
-            ${settings.showSearch ? `
-              <div class="fides-sidebar-search">
-                <div class="fides-search-wrapper">
-                  <span class="fides-search-icon">${icons.search}</span>
-                  <input 
-                    type="text" 
-                    class="fides-search-input" 
-                    placeholder="Search..."
-                    value="${escapeHtml(filters.search)}"
-                    id="fides-search"
-                  >
-                  <button class="fides-search-clear ${filters.search ? '' : 'hidden'}" id="fides-search-clear" type="button">
-                    ${icons.xSmall}
-                  </button>
-                </div>
-              </div>
-            ` : ''}
+            <div class="fides-quick-filters">
+              <span class="fides-quick-filters-title">Quick filters</span>
+              ${originalIds.length > 0 ? `
+              <label class="fides-filter-checkbox">
+                <input type="checkbox" data-filter="linkedWallets" data-value="true" ${filters.ids.length > 0 ? 'checked' : ''}>
+                <span>Linked wallets<span class="fides-filter-option-count">(${originalIds.length})</span></span>
+              </label>
+              ` : ''}
+              <label class="fides-filter-checkbox">
+                <input type="checkbox" data-filter="addedLast30Days" data-value="true" ${filters.addedLast30Days ? 'checked' : ''}>
+                <span>Added last 30 days<span class="fides-filter-option-count">(${filterFacets ? filterFacets.addedLast30Days : ''})</span></span>
+              </label>
+              <label class="fides-filter-checkbox">
+                <input type="checkbox" data-filter="includesVideo" data-value="true" ${filters.includesVideo ? 'checked' : ''}>
+                <span>Includes video<span class="fides-filter-option-count">(${filterFacets ? filterFacets.includesVideo : ''})</span></span>
+              </label>
+            </div>
             ${!settings.type ? `
               <div class="fides-filter-group collapsible ${!filterGroupState.type ? 'collapsed' : ''} ${filters.type.length > 0 ? 'has-active' : ''}" data-filter-group="type">
                 <button class="fides-filter-label-toggle" type="button" aria-expanded="${filterGroupState.type}">
@@ -486,11 +915,11 @@
                 <div class="fides-filter-options">
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="type" data-value="personal" ${filters.type.includes('personal') ? 'checked' : ''}>
-                    <span>Personal</span>
+                    <span>Personal<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.type['personal'] || 0) : ''})</span></span>
                   </label>
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="type" data-value="organizational" ${filters.type.includes('organizational') ? 'checked' : ''}>
-                    <span>Organizational</span>
+                    <span>Organizational<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.type['organizational'] || 0) : ''})</span></span>
                   </label>
                 </div>
               </div>
@@ -505,11 +934,11 @@
                 <div class="fides-filter-options">
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="status" data-value="available" ${filters.status.includes('available') ? 'checked' : ''}>
-                    <span>Publicly available</span>
+                    <span>Publicly available<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.status.available || 0) : ''})</span></span>
                   </label>
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="status" data-value="development" ${filters.status.includes('development') ? 'checked' : ''}>
-                    <span>Not publicly available</span>
+                    <span>Not publicly available<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.status.development || 0) : ''})</span></span>
                   </label>
                 </div>
               </div>
@@ -522,11 +951,11 @@
                 <div class="fides-filter-options">
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="governance" data-value="government" ${filters.governance === 'government' ? 'checked' : ''}>
-                    <span>Government</span>
+                    <span>Government<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.governance.government || 0) : ''})</span></span>
                   </label>
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="governance" data-value="private" ${filters.governance === 'private' ? 'checked' : ''}>
-                    <span>Non-government</span>
+                    <span>Non-government<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.governance.private || 0) : ''})</span></span>
                   </label>
                 </div>
               </div>
@@ -539,15 +968,15 @@
                 <div class="fides-filter-options">
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="platforms" data-value="iOS" ${filters.platforms.includes('iOS') ? 'checked' : ''}>
-                    <span>iOS</span>
+                    <span>iOS<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.platforms['iOS'] || 0) : ''})</span></span>
                   </label>
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="platforms" data-value="Android" ${filters.platforms.includes('Android') ? 'checked' : ''}>
-                    <span>Android</span>
+                    <span>Android<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.platforms['Android'] || 0) : ''})</span></span>
                   </label>
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="platforms" data-value="Web" ${filters.platforms.includes('Web') ? 'checked' : ''}>
-                    <span>Web</span>
+                    <span>Web<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.platforms['Web'] || 0) : ''})</span></span>
                   </label>
                 </div>
               </div>
@@ -562,15 +991,15 @@
                 <div class="fides-filter-options">
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="capabilities" data-value="holder" ${filters.capabilities.includes('holder') ? 'checked' : ''}>
-                    <span>Holder</span>
+                    <span>Holder<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.capabilities['holder'] || 0) : ''})</span></span>
                   </label>
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="capabilities" data-value="issuer" ${filters.capabilities.includes('issuer') ? 'checked' : ''}>
-                    <span>Issuer</span>
+                    <span>Issuer<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.capabilities['issuer'] || 0) : ''})</span></span>
                   </label>
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="capabilities" data-value="verifier" ${filters.capabilities.includes('verifier') ? 'checked' : ''}>
-                    <span>Verifier</span>
+                    <span>Verifier<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.capabilities['verifier'] || 0) : ''})</span></span>
                   </label>
                 </div>
               </div>
@@ -582,10 +1011,10 @@
                 ${icons.chevronDown}
               </button>
               <div class="fides-filter-options fides-filter-options-scrollable">
-                ${getAvailableCountries().map(code => `
+                ${(filterFacets ? filterFacets.country : getAvailableCountries().map(code => ({ code, count: 0 }))).map(({ code, count }) => `
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="countries" data-value="${code}" ${filters.countries.includes(code) ? 'checked' : ''}>
-                    <span><img src="https://flagcdn.com/w20/${code.toLowerCase()}.png" alt="" class="fides-country-flag"> ${COUNTRY_NAMES[code] || code}</span>
+                    <span><img src="https://flagcdn.com/w20/${code.toLowerCase()}.png" alt="" class="fides-country-flag"> ${COUNTRY_NAMES[code] || code}<span class="fides-filter-option-count">(${count != null ? count : ''})</span></span>
                   </label>
                 `).join('')}
               </div>
@@ -599,19 +1028,23 @@
               <div class="fides-filter-options">
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="interoperabilityProfiles" data-value="EUDI Wallet ARF" ${filters.interoperabilityProfiles.includes('EUDI Wallet ARF') ? 'checked' : ''}>
-                  <span>EUDI Wallet ARF</span>
+                  <span>EUDI Wallet ARF<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.interoperabilityProfiles['EUDI Wallet ARF'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="interoperabilityProfiles" data-value="DIIP v4" ${filters.interoperabilityProfiles.includes('DIIP v4') ? 'checked' : ''}>
-                  <span>DIIP v4</span>
+                  <span>DIIP v4<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.interoperabilityProfiles['DIIP v4'] || 0) : ''})</span></span>
+                </label>
+                <label class="fides-filter-checkbox">
+                  <input type="checkbox" data-filter="interoperabilityProfiles" data-value="DIIP v5" ${filters.interoperabilityProfiles.includes('DIIP v5') ? 'checked' : ''}>
+                  <span>DIIP v5<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.interoperabilityProfiles['DIIP v5'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="interoperabilityProfiles" data-value="EWC v3" ${filters.interoperabilityProfiles.includes('EWC v3') ? 'checked' : ''}>
-                  <span>EWC v3</span>
+                  <span>EWC v3<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.interoperabilityProfiles['EWC v3'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="interoperabilityProfiles" data-value="HAIP v1" ${filters.interoperabilityProfiles.includes('HAIP v1') ? 'checked' : ''}>
-                  <span>HAIP v1</span>
+                  <span>HAIP v1<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.interoperabilityProfiles['HAIP v1'] || 0) : ''})</span></span>
                 </label>
               </div>
             </div>
@@ -624,31 +1057,31 @@
               <div class="fides-filter-options">
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="credentialFormats" data-value="SD-JWT-VC" ${filters.credentialFormats.includes('SD-JWT-VC') ? 'checked' : ''}>
-                  <span>SD-JWT-VC</span>
+                  <span>SD-JWT-VC<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.credentialFormats['SD-JWT-VC'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="credentialFormats" data-value="mDL/mDoc" ${filters.credentialFormats.includes('mDL/mDoc') ? 'checked' : ''}>
-                  <span>mDL/mDoc</span>
+                  <span>mDL/mDoc<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.credentialFormats['mDL/mDoc'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="credentialFormats" data-value="JWT-VC" ${filters.credentialFormats.includes('JWT-VC') ? 'checked' : ''}>
-                  <span>JWT-VC</span>
+                  <span>JWT-VC<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.credentialFormats['JWT-VC'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="credentialFormats" data-value="AnonCreds" ${filters.credentialFormats.includes('AnonCreds') ? 'checked' : ''}>
-                  <span>AnonCreds</span>
+                  <span>AnonCreds<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.credentialFormats['AnonCreds'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="credentialFormats" data-value="JSON-LD VC" ${filters.credentialFormats.includes('JSON-LD VC') ? 'checked' : ''}>
-                  <span>JSON-LD VC</span>
+                  <span>JSON-LD VC<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.credentialFormats['JSON-LD VC'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="credentialFormats" data-value="Apple Wallet Pass" ${filters.credentialFormats.includes('Apple Wallet Pass') ? 'checked' : ''}>
-                  <span>Apple Wallet Pass</span>
+                  <span>Apple Wallet Pass<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.credentialFormats['Apple Wallet Pass'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="credentialFormats" data-value="Google Wallet Pass" ${filters.credentialFormats.includes('Google Wallet Pass') ? 'checked' : ''}>
-                  <span>Google Wallet Pass</span>
+                  <span>Google Wallet Pass<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.credentialFormats['Google Wallet Pass'] || 0) : ''})</span></span>
                 </label>
               </div>
             </div>
@@ -661,15 +1094,15 @@
               <div class="fides-filter-options">
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="issuanceProtocols" data-value="OpenID4VCI" ${filters.issuanceProtocols.includes('OpenID4VCI') ? 'checked' : ''}>
-                  <span>OpenID4VCI</span>
+                  <span>OpenID4VCI<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.issuanceProtocols['OpenID4VCI'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="issuanceProtocols" data-value="DIDComm Issue Credential v2" ${filters.issuanceProtocols.includes('DIDComm Issue Credential v2') ? 'checked' : ''}>
-                  <span>DIDComm v2</span>
+                  <span>DIDComm v2<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.issuanceProtocols['DIDComm Issue Credential v2'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="issuanceProtocols" data-value="DIDComm Issue Credential v1" ${filters.issuanceProtocols.includes('DIDComm Issue Credential v1') ? 'checked' : ''}>
-                  <span>DIDComm v1</span>
+                  <span>DIDComm v1<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.issuanceProtocols['DIDComm Issue Credential v1'] || 0) : ''})</span></span>
                 </label>
               </div>
             </div>
@@ -682,19 +1115,19 @@
               <div class="fides-filter-options">
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="presentationProtocols" data-value="OpenID4VP" ${filters.presentationProtocols.includes('OpenID4VP') ? 'checked' : ''}>
-                  <span>OpenID4VP</span>
+                  <span>OpenID4VP<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.presentationProtocols['OpenID4VP'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="presentationProtocols" data-value="SIOPv2" ${filters.presentationProtocols.includes('SIOPv2') ? 'checked' : ''}>
-                  <span>SIOPv2</span>
+                  <span>SIOPv2<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.presentationProtocols['SIOPv2'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="presentationProtocols" data-value="DIDComm Present Proof v2" ${filters.presentationProtocols.includes('DIDComm Present Proof v2') ? 'checked' : ''}>
-                  <span>DIDComm v2</span>
+                  <span>DIDComm v2<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.presentationProtocols['DIDComm Present Proof v2'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="presentationProtocols" data-value="ISO 18013-5" ${filters.presentationProtocols.includes('ISO 18013-5') ? 'checked' : ''}>
-                  <span>ISO 18013-5</span>
+                  <span>ISO 18013-5<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.presentationProtocols['ISO 18013-5'] || 0) : ''})</span></span>
                 </label>
               </div>
             </div>
@@ -707,23 +1140,23 @@
               <div class="fides-filter-options">
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="supportedIdentifiers" data-value="did:web" ${filters.supportedIdentifiers.includes('did:web') ? 'checked' : ''}>
-                  <span>did:web</span>
+                  <span>did:web<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.supportedIdentifiers['did:web'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="supportedIdentifiers" data-value="did:key" ${filters.supportedIdentifiers.includes('did:key') ? 'checked' : ''}>
-                  <span>did:key</span>
+                  <span>did:key<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.supportedIdentifiers['did:key'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="supportedIdentifiers" data-value="did:jwk" ${filters.supportedIdentifiers.includes('did:jwk') ? 'checked' : ''}>
-                  <span>did:jwk</span>
+                  <span>did:jwk<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.supportedIdentifiers['did:jwk'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="supportedIdentifiers" data-value="did:peer" ${filters.supportedIdentifiers.includes('did:peer') ? 'checked' : ''}>
-                  <span>did:peer</span>
+                  <span>did:peer<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.supportedIdentifiers['did:peer'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="supportedIdentifiers" data-value="did:ebsi" ${filters.supportedIdentifiers.includes('did:ebsi') ? 'checked' : ''}>
-                  <span>did:ebsi</span>
+                  <span>did:ebsi<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.supportedIdentifiers['did:ebsi'] || 0) : ''})</span></span>
                 </label>
               </div>
             </div>
@@ -736,23 +1169,23 @@
               <div class="fides-filter-options">
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="keyStorage" data-value="Secure Enclave (iOS)" ${filters.keyStorage.includes('Secure Enclave (iOS)') ? 'checked' : ''}>
-                  <span>Secure Enclave (iOS)</span>
+                  <span>Secure Enclave (iOS)<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.keyStorage['Secure Enclave (iOS)'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="keyStorage" data-value="StrongBox (Android)" ${filters.keyStorage.includes('StrongBox (Android)') ? 'checked' : ''}>
-                  <span>StrongBox (Android)</span>
+                  <span>StrongBox (Android)<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.keyStorage['StrongBox (Android)'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="keyStorage" data-value="Software" ${filters.keyStorage.includes('Software') ? 'checked' : ''}>
-                  <span>Software</span>
+                  <span>Software<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.keyStorage['Software'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="keyStorage" data-value="HSM" ${filters.keyStorage.includes('HSM') ? 'checked' : ''}>
-                  <span>HSM</span>
+                  <span>HSM<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.keyStorage['HSM'] || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="keyStorage" data-value="TEE" ${filters.keyStorage.includes('TEE') ? 'checked' : ''}>
-                  <span>TEE</span>
+                  <span>TEE<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.keyStorage['TEE'] || 0) : ''})</span></span>
                 </label>
               </div>
             </div>
@@ -764,10 +1197,10 @@
                 ${icons.chevronDown}
               </button>
               <div class="fides-filter-options">
-                ${getAvailableSigningAlgorithms().map(alg => `
+                ${getAvailableSigningAlgorithms().map(label => `
                   <label class="fides-filter-checkbox">
-                    <input type="checkbox" data-filter="signingAlgorithms" data-value="${alg}" ${filters.signingAlgorithms.includes(alg) ? 'checked' : ''}>
-                    <span>${escapeHtml(alg)}</span>
+                    <input type="checkbox" data-filter="signingAlgorithms" data-value="${escapeHtml(label)}" ${filters.signingAlgorithms.includes(label) ? 'checked' : ''}>
+                    <span>${escapeHtml(label)}<span class="fides-filter-option-count">(${filterFacets && filterFacets.signingAlgorithms[label] != null ? filterFacets.signingAlgorithms[label] : ''})</span></span>
                   </label>
                 `).join('')}
               </div>
@@ -784,7 +1217,7 @@
                 ${getAvailableCredentialStatusMethods().map(method => `
                   <label class="fides-filter-checkbox">
                     <input type="checkbox" data-filter="credentialStatusMethods" data-value="${method}" ${filters.credentialStatusMethods.includes(method) ? 'checked' : ''}>
-                    <span>${escapeHtml(method)}</span>
+                    <span>${escapeHtml(method)}<span class="fides-filter-option-count">(${filterFacets && filterFacets.credentialStatusMethods[method] != null ? filterFacets.credentialStatusMethods[method] : ''})</span></span>
                   </label>
                 `).join('')}
               </div>
@@ -799,11 +1232,11 @@
               <div class="fides-filter-options">
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="openSource" data-value="true" ${filters.openSource === true ? 'checked' : ''}>
-                  <span>Open Source</span>
+                  <span>Open Source<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.openSource.true || 0) : ''})</span></span>
                 </label>
                 <label class="fides-filter-checkbox">
                   <input type="checkbox" data-filter="openSource" data-value="false" ${filters.openSource === false ? 'checked' : ''}>
-                  <span>Proprietary</span>
+                  <span>Proprietary<span class="fides-filter-option-count">(${filterFacets ? (filterFacets.openSource.false || 0) : ''})</span></span>
                 </label>
               </div>
             </div>
@@ -815,33 +1248,35 @@
     // Main content area
     html += `<main class="fides-content">`;
 
-    // Mobile search bar (visible only on mobile)
-    if (settings.showSearch) {
-      html += `
-        <div class="fides-mobile-search">
-          <div class="fides-search-wrapper">
-            <span class="fides-search-icon">${icons.search}</span>
-            <input 
-              type="text" 
-              class="fides-search-input fides-mobile-search-input" 
-              placeholder="Search..."
-              value="${escapeHtml(filters.search)}"
-              id="fides-mobile-search"
-            >
-            <button class="fides-search-clear ${filters.search ? '' : 'hidden'}" id="fides-mobile-search-clear" type="button">
-              ${icons.xSmall}
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    // Results count
+    // Results bar: search (optional) + sort + map link + mobile filter toggle (matches credential catalog layout)
     html += `
       <div class="fides-results-bar">
-        <div class="fides-results-count">
-          ${filtered.length} wallet${filtered.length !== 1 ? 's' : ''} found
-        </div>
+        ${settings.showSearch ? `
+          <div class="fides-topbar-search">
+            <div class="fides-search-wrapper">
+              <span class="fides-search-icon">${icons.search}</span>
+              <input
+                type="text"
+                class="fides-search-input"
+                placeholder="Search..."
+                value="${escapeHtml(filters.search)}"
+                id="fides-search-input"
+                autocomplete="off"
+              >
+              <button class="fides-search-clear ${filters.search ? '' : 'hidden'}" id="fides-search-clear" type="button" aria-label="Clear search">
+                ${icons.xSmall}
+              </button>
+            </div>
+          </div>
+        ` : ''}
+        <label class="fides-sort-label" for="fides-sort-select">
+          <span class="fides-sort-text">Sort by:</span>
+          <select id="fides-sort-select" class="fides-sort-select">
+            <option value="lastUpdated" ${sortBy === 'lastUpdated' ? 'selected' : ''}>Last updated</option>
+            <option value="az" ${sortBy === 'az' ? 'selected' : ''}>A-Z</option>
+          </select>
+        </label>
+        <a href="${MAP_PAGE_URL}" class="fides-show-on-map" target="_blank" rel="noopener" aria-label="Show on map (opens in new tab)">${icons.externalLink}<span class="fides-show-on-map-label fides-show-on-map-label--full">Show on map</span><span class="fides-show-on-map-label fides-show-on-map-label--short" aria-hidden="true">Map</span></a>
         <!-- Mobile filter toggle -->
         ${settings.showFilters ? `
           <button class="fides-mobile-filter-toggle" id="fides-mobile-filter-toggle">
@@ -850,6 +1285,27 @@
             <span class="fides-filter-count ${activeFilterCount > 0 ? '' : 'hidden'}">${activeFilterCount || 0}</span>
           </button>
         ` : ''}
+      </div>
+    `;
+    const walletsLabel = settings.type === 'personal' ? 'Personal Wallets' : settings.type === 'organizational' ? 'Business Wallets' : 'Wallets';
+    html += `
+      <div class="fides-kpi-row">
+        <button class="fides-kpi-card" type="button" data-kpi-action="clear-added-filter">
+          <span class="fides-kpi-value">${metrics.total}</span>
+          <span class="fides-kpi-label">${walletsLabel}</span>
+        </button>
+        <button class="fides-kpi-card ${filters.addedLast30Days ? 'active' : ''}" type="button" data-kpi-action="toggle-added-filter">
+          <span class="fides-kpi-value">${metrics.newLast30Days}</span>
+          <span class="fides-kpi-label">New<span class="fides-kpi-label-extra"> last 30 days</span></span>
+        </button>
+        <button class="fides-kpi-card" type="button" data-kpi-action="set-last-updated-sort">
+          <span class="fides-kpi-value">${metrics.updatedLast30Days}</span>
+          <span class="fides-kpi-label">Updated<span class="fides-kpi-label-extra"> last 30 days</span></span>
+        </button>
+        <button class="fides-kpi-card ${filters.countries.length > 0 ? 'active' : ''}" type="button" data-kpi-action="clear-country-filter">
+          <span class="fides-kpi-value">${metrics.countryCount}</span>
+          <span class="fides-kpi-label">Countries</span>
+        </button>
       </div>
     `;
 
@@ -878,7 +1334,7 @@
     
     // Restore focus to search input if it was focused
     if (wasSearchFocused) {
-      const newSearchInput = document.getElementById('fides-search');
+      const newSearchInput = document.getElementById('fides-search-input');
       if (newSearchInput) {
         newSearchInput.focus();
         newSearchInput.setSelectionRange(cursorPosition, cursorPosition);
@@ -892,21 +1348,25 @@
    */
   function renderWalletGridOnly() {
     const filtered = getFilteredWallets();
+    const metrics = getCatalogMetrics(filtered);
     
-    // Update results count
-    const resultsCount = container.querySelector('.fides-results-count');
-    if (resultsCount) {
-      resultsCount.textContent = `${filtered.length} wallet${filtered.length !== 1 ? 's' : ''} found`;
-    }
+    const kpiTotal = container.querySelector('.fides-kpi-card[data-kpi-action="clear-added-filter"] .fides-kpi-value');
+    const kpiNew = container.querySelector('.fides-kpi-card[data-kpi-action="toggle-added-filter"] .fides-kpi-value');
+    const kpiUpdated = container.querySelector('.fides-kpi-card[data-kpi-action="set-last-updated-sort"] .fides-kpi-value');
+    const kpiCountries = container.querySelector('.fides-kpi-card[data-kpi-action="clear-country-filter"] .fides-kpi-value');
+    const kpiAddedCard = container.querySelector('.fides-kpi-card[data-kpi-action="toggle-added-filter"]');
+    const kpiCountryCard = container.querySelector('.fides-kpi-card[data-kpi-action="clear-country-filter"]');
+    if (kpiTotal) kpiTotal.textContent = String(metrics.total);
+    if (kpiNew) kpiNew.textContent = String(metrics.newLast30Days);
+    if (kpiUpdated) kpiUpdated.textContent = String(metrics.updatedLast30Days);
+    if (kpiCountries) kpiCountries.textContent = String(metrics.countryCount);
+    if (kpiAddedCard) kpiAddedCard.classList.toggle('active', filters.addedLast30Days);
+    if (kpiCountryCard) kpiCountryCard.classList.toggle('active', filters.countries.length > 0);
     
     // Update search clear button visibility
     const searchClear = document.getElementById('fides-search-clear');
-    const mobileSearchClear = document.getElementById('fides-mobile-search-clear');
     if (searchClear) {
       searchClear.classList.toggle('hidden', !filters.search);
-    }
-    if (mobileSearchClear) {
-      mobileSearchClear.classList.toggle('hidden', !filters.search);
     }
     
     // Update wallet grid
@@ -1001,6 +1461,12 @@
     };
 
     const displayName = getDisplayName(wallet.name);
+    const addedDate = getWalletAddedDate(wallet);
+    const updatedDate = getWalletUpdatedDate(wallet);
+    const isNewWallet = isWithinLastDays(addedDate, 30);
+    const activityLabel = isNewWallet && addedDate
+      ? `Added ${addedDate.toLocaleDateString('en-US')}`
+      : formatUpdatedLabel(updatedDate);
 
     return `
       <div class="fides-wallet-card" data-wallet-id="${wallet.id}" role="button" tabindex="0">
@@ -1010,11 +1476,12 @@
             : `<div class="fides-wallet-logo-placeholder">${icons.wallet}</div>`
           }
           <div class="fides-wallet-info">
-            <h3 class="fides-wallet-name">${escapeHtml(displayName)}</h3>
+            <h3 class="fides-wallet-name" title="${escapeHtml(displayName)}">${escapeHtml(displayName)}</h3>
             <p class="fides-wallet-provider">${escapeHtml(wallet.provider.name)}</p>
           </div>
         </div>
         <div class="fides-wallet-body">
+          ${activityLabel ? `<p class="fides-wallet-updated">${escapeHtml(activityLabel)}</p>` : ''}
           ${wallet.description ? `<p class="fides-wallet-description">${escapeHtml(wallet.description)}</p>` : ''}
           
           ${wallet.type === 'organizational' && wallet.capabilities && wallet.capabilities.length > 0 ? `
@@ -1152,9 +1619,14 @@
                 <p class="fides-modal-provider">${icons.building} ${escapeHtml(wallet.provider.name)}</p>
               </div>
             </div>
-            <button class="fides-modal-close" id="fides-modal-close" aria-label="Close modal">
-              ${icons.xLarge}
-            </button>
+            <div class="fides-modal-header-actions">
+              <button type="button" class="fides-modal-copy-link" id="fides-modal-copy-link" aria-label="Copy link to this wallet" title="Copy link to this wallet">
+                ${icons.share}
+              </button>
+              <button class="fides-modal-close" id="fides-modal-close" aria-label="Close modal">
+                ${icons.xLarge}
+              </button>
+            </div>
           </div>
           
           <div class="fides-modal-body">
@@ -1184,6 +1656,9 @@
                 <p class="fides-modal-description">${escapeHtml(wallet.description)}</p>
               </div>
             ` : ''}
+
+            <!-- Video embed (if available) -->
+            ${wallet.video ? getVideoEmbedHtml(wallet.video) : ''}
 
             <!-- Quick info grid -->
             <div class="fides-modal-grid">
@@ -1272,7 +1747,7 @@
                     ${icons.penLine} Signing Algorithms
                   </div>
                   <div class="fides-modal-grid-value">
-                    ${wallet.signingAlgorithms.map(a => `<span class="fides-tag">${escapeHtml(a)}</span>`).join('')}
+                    ${uniqueSigningAlgorithmLabels(wallet.signingAlgorithms).map(label => `<span class="fides-tag">${escapeHtml(label)}</span>`).join('')}
                   </div>
                 </div>
               ` : ''}
@@ -1317,17 +1792,17 @@
             <!-- Links -->
             <div class="fides-modal-links">
               ${wallet.website ? `
-                <a href="${escapeHtml(wallet.website)}" target="_blank" rel="noopener" class="fides-modal-link primary">
+                <a href="${escapeHtml(wallet.website)}" target="_blank" rel="noopener" class="fides-modal-link primary" data-matomo-name="Visit website">
                   ${icons.externalLink} Visit Website
                 </a>
               ` : ''}
               ${wallet.openSource && wallet.repository ? `
-                <a href="${escapeHtml(wallet.repository)}" target="_blank" rel="noopener" class="fides-modal-link">
+                <a href="${escapeHtml(wallet.repository)}" target="_blank" rel="noopener" class="fides-modal-link" data-matomo-name="Repository">
                   ${icons.github} View Repository
                 </a>
               ` : ''}
               ${wallet.documentation ? `
-                <a href="${escapeHtml(wallet.documentation)}" target="_blank" rel="noopener" class="fides-modal-link">
+                <a href="${escapeHtml(wallet.documentation)}" target="_blank" rel="noopener" class="fides-modal-link" data-matomo-name="Documentation">
                   ${icons.book} Documentation
                 </a>
               ` : ''}
@@ -1386,12 +1861,137 @@
   }
 
   /**
+   * Show toast notification
+   */
+  function showToast(message, type = 'success') {
+    // Get theme from container
+    const containerTheme = container ? container.getAttribute('data-theme') : 'dark';
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'fides-toast';
+    toast.setAttribute('data-theme', containerTheme);
+    
+    // Add icon
+    const iconEl = document.createElement('div');
+    iconEl.className = 'fides-toast-icon';
+    iconEl.innerHTML = type === 'success' ? icons.check : icons.x;
+    
+    // Add message
+    const messageEl = document.createElement('div');
+    messageEl.className = 'fides-toast-message';
+    messageEl.textContent = message;
+    
+    toast.appendChild(iconEl);
+    toast.appendChild(messageEl);
+    
+    // Add to body
+    document.body.appendChild(toast);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+      toast.classList.add('fides-toast-out');
+      setTimeout(() => {
+        if (toast.parentNode) {
+          document.body.removeChild(toast);
+        }
+      }, 300);
+    }, 3000);
+  }
+
+  /**
+   * Get the direct link URL for the currently selected wallet (opens in modal when visited)
+   */
+  function getWalletDirectLink() {
+    if (!selectedWallet) return '';
+    const url = new URL(window.location.href);
+    url.searchParams.set('wallet', selectedWallet.id);
+    return url.toString();
+  }
+
+  /**
+   * Copy wallet direct link to clipboard and show feedback
+   */
+  function copyWalletLink() {
+    const url = getWalletDirectLink();
+    if (!url) return;
+    const btn = document.getElementById('fides-modal-copy-link');
+    const originalTitle = btn ? btn.getAttribute('title') : '';
+    const originalAriaLabel = btn ? btn.getAttribute('aria-label') : '';
+    
+    const showSuccess = () => {
+      if (btn) {
+        btn.setAttribute('title', 'Link copied!');
+        btn.setAttribute('aria-label', 'Link copied!');
+        btn.classList.add('copied');
+      }
+      showToast('Link copied to clipboard', 'success');
+      setTimeout(() => {
+        if (btn) {
+          btn.setAttribute('title', originalTitle);
+          btn.setAttribute('aria-label', originalAriaLabel);
+          btn.classList.remove('copied');
+        }
+      }, 2000);
+    };
+    
+    const showError = () => {
+      if (btn) {
+        btn.setAttribute('title', 'Copy failed');
+        setTimeout(() => {
+          if (btn) {
+            btn.setAttribute('title', originalTitle);
+            btn.setAttribute('aria-label', originalAriaLabel);
+          }
+        }, 2000);
+      }
+      showToast('Failed to copy link', 'error');
+    };
+    
+    // Try modern clipboard API first (requires HTTPS or localhost)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(showSuccess).catch(showError);
+    } else {
+      // Fallback for HTTP or older browsers
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = url;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (success) {
+          showSuccess();
+        } else {
+          showError();
+        }
+      } catch (err) {
+        showError();
+      }
+    }
+  }
+
+  /**
    * Attach modal event listeners
    */
   function attachModalListeners() {
     const overlay = document.getElementById('fides-modal-overlay');
     const closeBtn = document.getElementById('fides-modal-close');
+    const copyLinkBtn = document.getElementById('fides-modal-copy-link');
     const modal = overlay.querySelector('.fides-modal');
+
+    // Copy link button
+    if (copyLinkBtn) {
+      copyLinkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyWalletLink();
+      });
+    }
 
     // Close button
     if (closeBtn) {
@@ -1427,7 +2027,20 @@
   function openWalletDetail(walletId) {
     const wallet = wallets.find(w => w.id === walletId);
     if (wallet) {
+      if (window.FidesCatalogUI && typeof window.FidesCatalogUI.openWalletModal === 'function') {
+        window.FidesCatalogUI.openWalletModal(wallet, {
+          theme: container ? (container.getAttribute('data-theme') || 'dark') : 'dark',
+          onOpen: function(openedWallet) {
+            (window.FidesCatalogUI && window.FidesCatalogUI.trackMatomoEvent) && window.FidesCatalogUI.trackMatomoEvent('Wallet Catalog', 'Modal Open', openedWallet.name);
+          }
+        });
+        return;
+      }
       selectedWallet = wallet;
+      
+      // Track modal open in Matomo
+      (window.FidesCatalogUI && window.FidesCatalogUI.trackMatomoEvent) && window.FidesCatalogUI.trackMatomoEvent('Wallet Catalog', 'Modal Open', wallet.name);
+      
       renderModal(wallet);
     }
   }
@@ -1436,50 +2049,28 @@
    * Attach event listeners
    */
   function attachEventListeners() {
-    // Search inputs (sidebar + mobile)
-    const searchInput = document.getElementById('fides-search');
-    const mobileSearchInput = document.getElementById('fides-mobile-search');
-    
+    const searchInput = document.getElementById('fides-search-input');
+
     const handleSearchInput = debounce((e) => {
       filters.search = e.target.value;
-      // Use grid-only render to avoid losing focus/keyboard on mobile
       renderWalletGridOnly();
-      // Sync the other search input value
-      const otherInput = e.target.id === 'fides-search' 
-        ? document.getElementById('fides-mobile-search')
-        : document.getElementById('fides-search');
-      if (otherInput && otherInput.value !== e.target.value) {
-        otherInput.value = e.target.value;
-      }
     }, 300);
 
     if (searchInput) {
       searchInput.addEventListener('input', handleSearchInput);
     }
-    if (mobileSearchInput) {
-      mobileSearchInput.addEventListener('input', handleSearchInput);
-    }
 
-    // Search clear buttons
     const searchClear = document.getElementById('fides-search-clear');
-    const mobileSearchClear = document.getElementById('fides-mobile-search-clear');
-    
+
     const handleSearchClear = () => {
       filters.search = '';
-      // Clear both inputs
-      const sidebarInput = document.getElementById('fides-search');
-      const mobileInput = document.getElementById('fides-mobile-search');
-      if (sidebarInput) sidebarInput.value = '';
-      if (mobileInput) mobileInput.value = '';
-      // Use grid-only render
+      const input = document.getElementById('fides-search-input');
+      if (input) input.value = '';
       renderWalletGridOnly();
     };
 
     if (searchClear) {
       searchClear.addEventListener('click', handleSearchClear);
-    }
-    if (mobileSearchClear) {
-      mobileSearchClear.addEventListener('click', handleSearchClear);
     }
 
     // Mobile filter toggle
@@ -1518,7 +2109,8 @@
 
     // Collapsible filter toggles
     container.querySelectorAll('.fides-filter-label-toggle').forEach(toggle => {
-      toggle.addEventListener('click', () => {
+      toggle.addEventListener('click', (e) => {
+        if (e.target.closest('.fides-vocab-info')) return;
         const filterGroup = toggle.closest('.fides-filter-group');
         if (filterGroup) {
           const groupName = filterGroup.dataset.filterGroup;
@@ -1533,6 +2125,9 @@
       });
     });
 
+    // Vocabulary [i] info buttons
+    initVocabularyInfo(container);
+
     // Filter checkboxes
     container.querySelectorAll('.fides-filter-checkbox input[type="checkbox"]').forEach(checkbox => {
       checkbox.addEventListener('change', () => {
@@ -1540,8 +2135,14 @@
         const value = checkbox.dataset.value;
         const isChecked = checkbox.checked;
         
+        if (filterType === 'linkedWallets') {
+          filters.ids = isChecked ? [...originalIds] : [];
+        }
+        else if (filterType === 'addedLast30Days' || filterType === 'includesVideo') {
+          filters[filterType] = isChecked;
+        }
         // Special handling for openSource (boolean toggle)
-        if (filterType === 'openSource') {
+        else if (filterType === 'openSource') {
           const boolValue = value === 'true';
           filters.openSource = isChecked ? boolValue : null;
         } 
@@ -1550,17 +2151,68 @@
           filters.governance = isChecked ? value : null;
         }
         else {
-          // Array-based filters
+          // Array-based filters (signing algorithms use merged display labels as values)
+          const storedValue = value;
           if (isChecked) {
-            if (!filters[filterType].includes(value)) {
-              filters[filterType].push(value);
+            if (!filters[filterType].includes(storedValue)) {
+              filters[filterType].push(storedValue);
             }
           } else {
-            filters[filterType] = filters[filterType].filter(v => v !== value);
+            filters[filterType] = filters[filterType].filter(v => v !== storedValue);
           }
         }
         
         render();
+      });
+    });
+
+    const sortSelect = document.getElementById('fides-sort-select');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', () => {
+        const nextSort = sortSelect.value === 'az' ? 'az' : 'lastUpdated';
+        sortBy = nextSort;
+        try {
+          window.localStorage.setItem(SORT_PREFERENCE_STORAGE_KEY, sortBy);
+        } catch (error) {
+          // Ignore storage errors
+        }
+        render();
+      });
+    }
+
+    container.querySelectorAll('.fides-kpi-card').forEach((kpiCard) => {
+      kpiCard.addEventListener('click', () => {
+        const action = kpiCard.dataset.kpiAction;
+        (window.FidesCatalogUI && window.FidesCatalogUI.trackMatomoEvent) && window.FidesCatalogUI.trackMatomoEvent('Wallet Catalog', 'KPI Click', action || 'unknown');
+        if (action === 'toggle-added-filter') {
+          filters.addedLast30Days = !filters.addedLast30Days;
+          render();
+          return;
+        }
+        if (action === 'set-last-updated-sort') {
+          sortBy = 'lastUpdated';
+          try {
+            window.localStorage.setItem(SORT_PREFERENCE_STORAGE_KEY, sortBy);
+          } catch (error) {
+            // Ignore storage errors
+          }
+          render();
+          return;
+        }
+        if (action === 'clear-country-filter') {
+          if (filters.countries.length > 0) {
+            filters.countries = [];
+            render();
+          }
+          return;
+        }
+        if (action === 'clear-added-filter') {
+          if (filters.addedLast30Days) {
+            filters.addedLast30Days = false;
+            render();
+          }
+          return;
+        }
       });
     });
 
@@ -1584,8 +2236,18 @@
           interoperabilityProfiles: [],
           status: [],
           openSource: null,
-          governance: null
+          governance: null,
+          addedLast30Days: false,
+          includesVideo: false,
+          ids: []
         };
+        // Clear the deep-link pre-filter entirely (checkbox will disappear)
+        originalIds = [];
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('wallets')) {
+          url.searchParams.delete('wallets');
+          history.replaceState(null, '', url.toString());
+        }
         render();
       });
     }
@@ -1612,6 +2274,137 @@
   }
 
   /**
+   * Initialize [i] vocabulary info buttons on filter groups; show popup with group + option descriptions
+   */
+  function initVocabularyInfo(containerEl) {
+    if (!vocabulary) return;
+    hideVocabularyPopup();
+    containerEl.querySelectorAll('.fides-vocab-info').forEach(btn => btn.remove());
+    containerEl.querySelectorAll('.fides-filter-group').forEach(groupEl => {
+      const toggle = groupEl.querySelector('.fides-filter-label-toggle');
+      const labelSpan = toggle && toggle.querySelector('.fides-filter-label');
+      if (!toggle || !labelSpan) return;
+      const filterGroup = groupEl.dataset.filterGroup;
+      const vocabKey = WALLET_FILTER_TO_VOCAB[filterGroup] || filterGroup;
+      if (WALLET_VOCAB_NO_INFO.has(vocabKey)) return;
+      const infoBtn = document.createElement('button');
+      infoBtn.type = 'button';
+      infoBtn.className = 'fides-vocab-info';
+      infoBtn.dataset.group = vocabKey;
+      infoBtn.setAttribute('aria-label', 'Explain filter');
+      infoBtn.textContent = 'i';
+      infoBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showVocabularyPopup(e.currentTarget, groupEl, vocabKey);
+      });
+      const parent = labelSpan.parentNode;
+      if (parent.classList && parent.classList.contains('fides-filter-label-with-info')) {
+        parent.appendChild(infoBtn);
+        return;
+      }
+      const wrapper = document.createElement('div');
+      wrapper.className = 'fides-filter-label-with-info';
+      parent.insertBefore(wrapper, labelSpan);
+      wrapper.appendChild(labelSpan);
+      wrapper.appendChild(infoBtn);
+      const spacer = document.createElement('span');
+      spacer.className = 'fides-filter-toggle-spacer';
+      spacer.setAttribute('aria-hidden', 'true');
+      parent.insertBefore(spacer, wrapper.nextSibling);
+    });
+  }
+
+  function showVocabularyPopup(button, groupEl, vocabKey) {
+    hideVocabularyPopup();
+    const groupTerm = vocabulary[vocabKey];
+    const categoryName = (groupEl.querySelector('.fides-filter-label') && groupEl.querySelector('.fides-filter-label').textContent) ? groupEl.querySelector('.fides-filter-label').textContent.trim() : '';
+    let html = '';
+    if (categoryName) {
+      html += '<p class="fides-vocab-popup-title"><strong>' + escapeHtml(categoryName) + '</strong></p>';
+    }
+    if (groupTerm && groupTerm.description) {
+      html += '<p class="fides-vocab-popup-intro">' + escapeHtml(groupTerm.description) + '</p>';
+    }
+    const optionsEl = groupEl.querySelector('.fides-filter-options');
+    if (optionsEl) {
+      const labels = optionsEl.querySelectorAll('label.fides-filter-checkbox');
+      if (labels.length > 0) {
+        const listItems = [];
+        labels.forEach(label => {
+          const input = label.querySelector('input[data-value]');
+          const value = input ? input.dataset.value : '';
+          const labelText = (label.querySelector('span') || label).textContent.trim();
+          const optionVocabKey = (WALLET_OPTION_TO_VOCAB[vocabKey] && WALLET_OPTION_TO_VOCAB[vocabKey][value] !== undefined)
+            ? WALLET_OPTION_TO_VOCAB[vocabKey][value] : value;
+          const term = optionVocabKey ? vocabulary[optionVocabKey] : null;
+          const desc = term && term.description ? escapeHtml(term.description) : '';
+          listItems.push({ labelText, desc });
+        });
+        const hasAnyOptionDesc = listItems.some(item => item.desc);
+        if (hasAnyOptionDesc) {
+          html += '<ul class="fides-vocab-popup-list">';
+          listItems.forEach(item => {
+            html += '<li><strong>' + escapeHtml(item.labelText) + '</strong>' + (item.desc ? ': ' + item.desc : '') + '</li>';
+          });
+          html += '</ul>';
+        }
+      }
+    }
+    if (!html) html = '<p>No description available.</p>';
+
+    const popup = document.createElement('div');
+    popup.className = 'fides-vocab-popup';
+    popup.setAttribute('role', 'dialog');
+    popup.setAttribute('aria-label', 'Filter explanation');
+    popup.innerHTML = html;
+
+    // Create overlay backdrop
+    const overlay = document.createElement('div');
+    overlay.className = 'fides-vocab-overlay';
+    document.body.appendChild(overlay);
+    document.body.appendChild(popup);
+
+    // Position popup: more to the right (over first column), vertically centered; clamp to viewport
+    const margin = 20;
+    const rect = button.getBoundingClientRect();
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const pw = popup.offsetWidth;
+    const ph = popup.offsetHeight;
+    const popupLeft = Math.min(rect.right + 40, w - pw - margin);
+    const left = Math.max(margin, Math.min(popupLeft, w - pw - margin));
+    const top = Math.max(margin, Math.min((h - ph) / 2, h - ph - margin));
+    popup.style.left = left + 'px';
+    popup.style.top = top + 'px';
+    
+    setTimeout(() => {
+      overlay.classList.add('visible');
+      popup.classList.add('visible');
+    }, 10);
+
+    const close = (e) => {
+      if (e && e.target.closest('.fides-vocab-popup')) return; // Don't close if clicking inside popup
+      hideVocabularyPopup();
+      document.removeEventListener('click', close, true);
+      document.removeEventListener('keydown', onKeydown);
+    };
+    function onKeydown(e) {
+      if (e.key === 'Escape') close();
+    }
+    document.addEventListener('keydown', onKeydown);
+    // Use capture phase to intercept clicks before they reach links
+    setTimeout(() => document.addEventListener('click', close, true), 0);
+  }
+
+  function hideVocabularyPopup() {
+    const overlay = document.querySelector('.fides-vocab-overlay');
+    const popup = document.querySelector('.fides-vocab-popup');
+    if (overlay) overlay.remove();
+    if (popup) popup.remove();
+  }
+
+  /**
    * Utility: Escape HTML
    */
   function escapeHtml(str) {
@@ -1619,6 +2412,126 @@
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  }
+
+  /**
+   * ============================================================================
+   * VIDEO HELPER FUNCTIONS
+   * ============================================================================
+   * 
+   * IMPORTANT - CODE DUPLICATION WARNING:
+   * These functions are duplicated between:
+   * - wordpress-plugin/fides-rp-catalog/assets/rp-catalog.js
+   * - wordpress-plugin/fides-wallet-catalog/assets/wallet-catalog.js
+   * 
+   * When making changes (adding providers, fixing bugs), UPDATE BOTH FILES!
+   * ============================================================================
+   */
+
+  /**
+   * Video provider configuration
+   * Add new providers here - automatically supported in all functions
+   */
+  const VIDEO_PROVIDERS = [
+    {
+      name: 'youtube',
+      patterns: [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\?\/]+)/,
+        /youtube\.com\/embed\/([^&\?\/]+)/,
+        /youtube\.com\/shorts\/([^&\?\/]+)/
+      ],
+      embedUrl: (videoId) => `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`,
+      privacy: 'Uses youtube-nocookie.com for GDPR compliance'
+    },
+    {
+      name: 'vimeo',
+      patterns: [
+        /vimeo\.com\/(\d+)/,
+        /player\.vimeo\.com\/video\/(\d+)/
+      ],
+      embedUrl: (videoId) => `https://player.vimeo.com/video/${videoId}`,
+      privacy: 'Privacy-friendly by default'
+    }
+    // To add Loom support in the future, uncomment:
+    // {
+    //   name: 'loom',
+    //   patterns: [/loom\.com\/share\/([a-f0-9]+)/],
+    //   embedUrl: (videoId) => `https://www.loom.com/embed/${videoId}`,
+    //   privacy: 'Reasonably privacy-friendly'
+    // }
+  ];
+
+  /**
+   * Detect video provider from URL
+   * @param {string} url - Video URL
+   * @returns {string|null} - Provider name or null if not recognized
+   */
+  function detectVideoProvider(url) {
+    if (!url) return null;
+    
+    for (const provider of VIDEO_PROVIDERS) {
+      for (const pattern of provider.patterns) {
+        if (url.match(pattern)) {
+          return provider.name;
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /**
+   * Convert video URL to embed URL
+   * @param {string} videoUrl - Original video URL
+   * @returns {string|null} - Embed URL or null if provider not supported
+   */
+  function getVideoEmbedUrl(videoUrl) {
+    if (!videoUrl) return null;
+    
+    // Try each provider
+    for (const provider of VIDEO_PROVIDERS) {
+      for (const pattern of provider.patterns) {
+        const match = videoUrl.match(pattern);
+        if (match && match[1]) {
+          return provider.embedUrl(match[1]);
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /**
+   * Generate video embed HTML
+   * @param {string} videoUrl - Original video URL
+   * @returns {string} - HTML for embedded video or fallback button
+   */
+  function getVideoEmbedHtml(videoUrl) {
+    const embedUrl = getVideoEmbedUrl(videoUrl);
+    
+    if (embedUrl) {
+      return `
+        <div class="fides-video-container">
+          <iframe 
+            src="${embedUrl}"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            class="fides-video-iframe"
+            title="Video player">
+          </iframe>
+        </div>
+      `;
+    }
+    
+    // Fallback: external link button if provider not supported
+    return `
+      <div class="fides-video-fallback">
+        <a href="${escapeHtml(videoUrl)}" target="_blank" rel="noopener" class="fides-modal-link primary" data-matomo-name="Video">
+          ${icons.play} Watch Video (External)
+        </a>
+      </div>
+    `;
   }
 
   /**

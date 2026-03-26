@@ -39,10 +39,14 @@ Quick reference for wallet providers to see which fields accept fixed values (en
 | `description` | | 📝 | Any text |
 | `logo` | | 🔗 | URL |
 | `website` | | 🔗 | URL |
+| `video` | | 🔗 | URL to demo or promotional video |
 | `openSource` | | | `true`, `false` |
 | `license` | | 📝 | SPDX format recommended (`MIT`, `Apache-2.0`, `GPL-3.0`, `EUPL-1.2`) |
 | `repository` | | 🔗 | URL |
 | `releaseDate` | | 🆔 | `YYYY-MM-DD` |
+| `createdAt` | | 🔗 | ISO 8601 date-time (optional provider timestamp) |
+| `updated` | | 🔗 | ISO 8601 date-time (legacy wallet update key) |
+| `updatedAt` | | 🔗 | ISO 8601 date-time (preferred wallet update key) |
 | `documentation` | | 🔗 | URL |
 
 ---
@@ -61,7 +65,7 @@ Quick reference for wallet providers to see which fields accept fixed values (en
 
 | Field | Type | Valid Values |
 |-------|------|--------------|
-| `credentialFormats` | 🔒 | `SD-JWT`, `SD-JWT-VC`, `mDL/mDoc`, `AnonCreds`, `JWT-VC`, `JSON-LD VC`, `Apple Wallet Pass`, `Google Wallet Pass`, `X.509`, `CBOR-LD` |
+| `credentialFormats` | 🔒 | `SD-JWT`, `SD-JWT-VC`, `mDL/mDoc`, `AnonCreds`, `Idemix`, `JWT-VC`, `JSON-LD VC`, `Apple Wallet Pass`, `Google Wallet Pass`, `X.509`, `CBOR-LD` |
 | `issuanceProtocols` | 🔒 | `OpenID4VCI`, `DIDComm Issue Credential v1`, `DIDComm Issue Credential v2`, `ISO 18013-5 (Device Retrieval)` |
 | `presentationProtocols` | 🔒 | `OpenID4VP`, `DIDComm Present Proof v1`, `DIDComm Present Proof v2`, `ISO 18013-5`, `SIOPv2` |
 | `interoperabilityProfiles` | 🔒 | `DIIP v4`, `EWC v3`, `EUDI Wallet ARF`, `HAIP v1` |
@@ -149,6 +153,7 @@ Quick reference for wallet providers to see which fields accept fixed values (en
       "type": "personal",
       "logo": "https://example.com/wallet-logo.png",
       "website": "https://example.com/wallet",
+      "video": "https://www.youtube.com/watch?v=example",
       "platforms": ["iOS", "Android"],
       "openSource": true,
       "license": "Apache-2.0",
@@ -175,6 +180,14 @@ Quick reference for wallet providers to see which fields accept fixed values (en
 
 If you need a new enum value (e.g., a new credential format or protocol), open an issue or PR on GitHub:
 https://github.com/FIDEScommunity/fides-wallet-catalog
+
+## Notes on Crawler-managed Fields
+
+The aggregated output (`data/aggregated.json`) contains additional crawler-managed fields such as:
+- `fetchedAt`
+- `firstSeenAt`
+
+These are not required in provider `wallet-catalog.json` files.
 
 ---
 
